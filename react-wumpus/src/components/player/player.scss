@@ -1,6 +1,6 @@
 .player {
-	--player-pos-x: 0;
-	--player-pos-y: 0;
+	--player-pos-x: 1;
+	--player-pos-y: 1;
 
 	position: absolute;
 	width: var(--cell-size);
@@ -8,5 +8,7 @@
 	background-color: red;
 	z-index: 99;
 
-	transform: translate(var(--player-pos-x), var(--player-pos-y));
+	// transform: translate(var(--player-pos-x), var(--player-pos-y));
+	grid-row: var(--player-pos-y) / calc(1 + var(--player-pos-y));
+	grid-column: var(--player-pos-x) / calc(1 + var(--player-pos-x));
 }

@@ -18,8 +18,35 @@ const Board: React.FC<Props> = ({ size = 10 }) => {
 		setBoard(nBoard);
 	}, [size]);
 
+	function handleKeyPress(event: React.KeyboardEvent<HTMLDivElement>) {
+		let tempPos: Position = playerPos;
+
+		if (event.code === "ArrowUp" || event.code === "w") {
+			tempPos.y--;
+		}
+
+		if (event.code === "ArrowDown" || event.code === "s") {
+			tempPos.y++;
+		}
+
+		if (event.code === "ArrowLeft" || event.code === "a") {
+			tempPos.x--;
+		}
+
+		if (event.code === "ArrowRight" || event.code === "d") {
+			tempPos.x++;
+		}
+
+		movePlayer(tempPos);
+	}
+
 	//se multiplican los indices por el tamaño de celda => posicion
-	function handlePlayerMove(x: number, y: number) {}
+	function movePlayer({ x, y }: Position) {
+		//check out of bounds
+		//check wumpus / well
+		//uncover next cell
+		setPlayerPos({ x, y });
+	}
 
 	function createBoard(s: number) {
 		let board: Array<CellType[]> = [];
@@ -40,7 +67,12 @@ const Board: React.FC<Props> = ({ size = 10 }) => {
 	} as React.CSSProperties;
 
 	return (
-		<div className="board" style={dinamicBoardStyes}>
+		<div
+			className="board"
+			style={dinamicBoardStyes}
+			onKeyDown={handleKeyPress}
+			tabIndex={0}
+		>
 			<Player position={playerPos}></Player>
 			{board.map((row, index) => {
 				return row.map((cell, i) => {
