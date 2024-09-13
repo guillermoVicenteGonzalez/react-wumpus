@@ -75,10 +75,10 @@ const Board: React.FC<Props> = ({ size = 10 }) => {
 		>
 			<Player position={playerPos}></Player>
 			{board.map((row) => {
-				return row.map(({ type, visited, position }: CellType) => {
+				return row.map(({ states, visited, position }: CellType) => {
 					return (
 						<Cell
-							type={type}
+							states={states}
 							key={position.x + position.y}
 							position={position}
 							visited={visited}

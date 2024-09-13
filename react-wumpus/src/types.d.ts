@@ -7,12 +7,22 @@ const CELL_STATES = {
 	WUMPUS: "w",
 	BREEZE: "b",
 	STENCH: "s",
+	"BREEZE-STENCH": "bs",
 	EMPTY: " ",
 	WELL: "p",
+	GOLD: "g",
 } as const;
 
+type CellStates = {
+	WUMPUS?: boolean;
+	BREEZE?: boolean;
+	STENCH?: boolean;
+	WELL?: boolean;
+	GOLD?: boolean;
+};
+
 export type CellType = {
-	type: keyof typeof CELL_STATES;
+	states: CellStates;
 	visited: boolean;
 	position: Position;
 };

@@ -7,7 +7,7 @@ interface Props {
 	type: CellType;
 }
 
-const Cell: React.FC<CellType> = ({ position, visited, type }) => {
+const Cell: React.FC<CellType> = ({ position, visited, states }) => {
 	const cellState = visited ? "cell--visited" : "";
 	function cellColor() {
 		switch (type) {
@@ -24,7 +24,7 @@ const Cell: React.FC<CellType> = ({ position, visited, type }) => {
 		}
 	}
 
-	return <div className={`cell ${cellState} ${cellColor()}`}></div>;
+	return <div className={`cell ${cellState} `}></div>;
 };
 
 export default Cell;
