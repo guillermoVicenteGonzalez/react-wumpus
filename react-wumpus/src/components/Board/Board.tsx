@@ -3,23 +3,26 @@ import "./board.scss";
 import Player from "../player/player";
 import { type Position, type CellType } from "../../types";
 import Cell from "./Cell";
+import { useBoard } from "../../hooks/useBoard";
+import usePlayerPos from "../../hooks/usePlayerPos";
 
 interface Props {
 	size: number;
 }
 
+const startingPos: Position = { x: 1, y: 1 };
+
 const Board: React.FC<Props> = ({ size = 10 }) => {
-	const [board, setBoard] = useState<Array<CellType[]>>([]);
-	const [playerPos, setPlayerPos] = useState<Position>({ x: 5, y: 5 });
+	// const [playerPos, setPlayerPos] = useState<Position>(startingPos);
+	const { playerPos, updatePlayerPos } = usePlayerPos(startingPos, size);
+	const { board, visitCell } = useBoard(size);
 
 	useEffect(() => {
-		let nBoard = createBoard(size);
-		console.log(nBoard);
-		setBoard(nBoard);
-	}, [size]);
+		if (board.length > 0) visitCell(startingPos);
+	}, []);
 
 	function handleKeyPress(event: React.KeyboardEvent<HTMLDivElement>) {
-		let tempPos: Position = playerPos;
+		let tempPos: Position = { ...playerPos };
 
 		if (event.code === "ArrowUp" || event.code === "w") {
 			tempPos.y--;
@@ -42,37 +45,12 @@ const Board: React.FC<Props> = ({ size = 10 }) => {
 
 	//se multiplican los indices por el tamaño de celda => posicion
 	function movePlayer({ x, y }: Position) {
-		let auxBoard = [...board];
+		visitCell(playerPos);
+		console.log("setting player pos");
+		let err = updatePlayerPos({ x, y });
 
-		//check out of bounds
-		if (x > size || y > size || x <= 0 || y <= 0) {
-			alert("out of bounds");
-			return;
-		}
-
-		auxBoard[y - 1][x - 1].visited = true;
-		console.log(board[x - 1][y - 1].type);
 		//check wumpus / well
 		//uncover next cell
-		setPlayerPos({ x, y });
-		setBoard(auxBoard);
-	}
-
-	function createBoard(s: number) {
-		let board: Array<CellType[]> = [];
-		for (let i = 0; i < s; i++) {
-			let nestedBoard: CellType[] = [];
-			// let nestedBoard: CellType[] = new Array(s).fill("WUMPUS");
-			for (let j = 0; j < size; j++) {
-				nestedBoard.push({
-					type: "WUMPUS",
-					visited: false,
-					position: { x: i, y: j },
-				});
-			}
-			board.push(nestedBoard);
-		}
-		return board;
 	}
 
 	const dinamicBoardStyes = {
@@ -100,6 +78,13 @@ const Board: React.FC<Props> = ({ size = 10 }) => {
 					);
 				});
 			})}
+
+			<footer>
+				<h1>Debug</h1>
+				<h2>
+					Player pos x: {playerPos.x} y: {playerPos.y}
+				</h2>
+			</footer>
 		</div>
 	);
 };
