@@ -1,8 +1,8 @@
-import { type CellType } from "../../constants";
 import { useEffect, useState } from "react";
 import "./board.scss";
 import Player from "../player/player";
-import { type Position } from "../player/player";
+import { type Position, type CellType } from "../../types";
+import Cell from "./Cell";
 
 interface Props {
 	size: number;
@@ -54,7 +54,11 @@ const Board: React.FC<Props> = ({ size = 10 }) => {
 			let nestedBoard: CellType[] = [];
 			// let nestedBoard: CellType[] = new Array(s).fill("WUMPUS");
 			for (let j = 0; j < size; j++) {
-				nestedBoard.push("WUMPUS");
+				nestedBoard.push({
+					type: "WUMPUS",
+					visited: false,
+					position: { x: i, y: j },
+				});
 			}
 			board.push(nestedBoard);
 		}
@@ -74,9 +78,16 @@ const Board: React.FC<Props> = ({ size = 10 }) => {
 			tabIndex={0}
 		>
 			<Player position={playerPos}></Player>
-			{board.map((row, index) => {
-				return row.map((cell, i) => {
-					return <div key={i} className="board__cell"></div>;
+			{board.map((row) => {
+				return row.map(({ type, visited, position }: CellType) => {
+					return (
+						<Cell
+							type={type}
+							key={position.toString()}
+							position={position}
+							visited={visited}
+						></Cell>
+					);
 				});
 			})}
 		</div>

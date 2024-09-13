@@ -1,0 +1,9 @@
+.cell {
+	min-width: var(--cell-size);
+	min-height: var(--cell-size);
+	background-color: blue;
+
+	&--visited {
+		background-color: green;
+	}
+}
