@@ -8,6 +8,7 @@ const CELL_STATES = {
 	BREEZE: "b",
 	STENCH: "s",
 	EMPTY: " ",
+	WELL: "p",
 } as const;
 
 export type CellType = {

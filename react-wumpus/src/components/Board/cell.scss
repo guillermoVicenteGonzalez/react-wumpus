@@ -1,9 +1,38 @@
+$hidden-color: blue;
+$wumpus-color: green;
+$well-color: aliceblue;
+$default-color: brown;
+
 .cell {
 	min-width: var(--cell-size);
 	min-height: var(--cell-size);
-	background-color: blue;
+	background-color: $default-color;
 
-	&--visited {
-		background-color: green;
+	&::before {
+		display: block;
+		content: " ";
+		background-color: blue;
+		width: 100%;
+		height: 100%;
+	}
+
+	&--visited::before {
+		background-color: transparent;
+	}
+
+	&--wumpus {
+		background-color: $wumpus-color;
+	}
+
+	&--well {
+		background-color: $well-color;
+	}
+
+	&--stench {
+		background-color: rgba($wumpus-color, 0.5);
+	}
+
+	&--breeze {
+		background-color: rgba($well-color, 0.5);
 	}
 }

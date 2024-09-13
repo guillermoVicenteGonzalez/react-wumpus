@@ -42,10 +42,20 @@ const Board: React.FC<Props> = ({ size = 10 }) => {
 
 	//se multiplican los indices por el tamaño de celda => posicion
 	function movePlayer({ x, y }: Position) {
+		let auxBoard = [...board];
+
 		//check out of bounds
+		if (x > size || y > size || x <= 0 || y <= 0) {
+			alert("out of bounds");
+			return;
+		}
+
+		auxBoard[y - 1][x - 1].visited = true;
+		console.log(board[x - 1][y - 1].type);
 		//check wumpus / well
 		//uncover next cell
 		setPlayerPos({ x, y });
+		setBoard(auxBoard);
 	}
 
 	function createBoard(s: number) {
@@ -83,7 +93,7 @@ const Board: React.FC<Props> = ({ size = 10 }) => {
 					return (
 						<Cell
 							type={type}
-							key={position.toString()}
+							key={position.x + position.y}
 							position={position}
 							visited={visited}
 						></Cell>
