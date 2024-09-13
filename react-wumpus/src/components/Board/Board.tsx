@@ -5,6 +5,7 @@ import { type Position, type CellType } from "../../types";
 import Cell from "./Cell";
 import { useBoard } from "../../hooks/useBoard";
 import usePlayerPos from "../../hooks/usePlayerPos";
+import Modal from "../modal/Modal";
 
 interface Props {
 	size: number;
@@ -16,13 +17,16 @@ const Board: React.FC<Props> = ({ size = 10 }) => {
 	// const [playerPos, setPlayerPos] = useState<Position>(startingPos);
 	const { playerPos, updatePlayerPos } = usePlayerPos(startingPos, size);
 	const { board, visitCell } = useBoard(size);
+	const [errorMsg, setErrorMsg] = useState<string>("");
+	const [modalVisible, setModalVisible] = useState<boolean>(false);
 
-	useEffect(() => {
-		if (board.length > 0) visitCell(startingPos);
-	}, []);
+	function handleCloseModal() {
+		setModalVisible(false);
+	}
 
 	function handleKeyPress(event: React.KeyboardEvent<HTMLDivElement>) {
 		let tempPos: Position = { ...playerPos };
+		if (modalVisible) return;
 
 		if (event.code === "ArrowUp" || event.code === "w") {
 			tempPos.y--;
@@ -48,6 +52,10 @@ const Board: React.FC<Props> = ({ size = 10 }) => {
 		visitCell(playerPos);
 		console.log("setting player pos");
 		let err = updatePlayerPos({ x, y });
+		if (err === -1) {
+			setModalVisible(true);
+			setErrorMsg("The player is out of bounds");
+		}
 
 		//check wumpus / well
 		//uncover next cell
@@ -85,6 +93,10 @@ const Board: React.FC<Props> = ({ size = 10 }) => {
 					Player pos x: {playerPos.x} y: {playerPos.y}
 				</h2>
 			</footer>
+
+			<Modal visible={modalVisible} onModalClose={handleCloseModal}>
+				<h1>{errorMsg}</h1>
+			</Modal>
 		</div>
 	);
 };

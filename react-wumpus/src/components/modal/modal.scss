@@ -1,0 +1,77 @@
+$animation-duration: 0.5s;
+
+.modal {
+	position: absolute;
+	background-color: #fff;
+
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+
+	min-width: 20rem;
+	min-height: 10rem;
+	width: 50%;
+	height: 20%;
+
+	padding: 1rem;
+	text-align: center;
+
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+
+	border-radius: 10px;
+	box-shadow: 0 0 2rem 2rem rgba(#000, 0.2);
+
+	&__content {
+		flex-grow: 1;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	&__controls {
+		border-top: solid 0.001px gray;
+		min-height: 30%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	&--visible {
+		visibility: visible;
+		transition: all 0.5s;
+		// animation: slideUp $animation-duration ease;
+		transform: translate(-50%, -50%);
+		opacity: 1;
+		animation-fill-mode: forwards;
+	}
+
+	&--hidden {
+		transition: all 0.5s;
+		visibility: hidden;
+		opacity: 0;
+		// animation: slideDown $animation-duration ease;
+		// animation-fill-mode: forwards;
+		transform: translate(-50%, +50vh);
+
+		// min-width: 0;
+		// min-height: 0;
+		// width: 0;
+		// height: 0;
+	}
+}
+
+@keyframes slideUp {
+	0% {
+		transform: translate(-50%, +50vh);
+	}
+}
+
+@keyframes slideDown {
+	0% {
+	}
+	100% {
+		transform: translate(-50%, +50vh);
+	}
+}
