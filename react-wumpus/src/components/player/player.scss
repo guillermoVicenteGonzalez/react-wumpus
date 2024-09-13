@@ -1,0 +1,12 @@
+.player {
+	--player-pos-x: 0;
+	--player-pos-y: 0;
+
+	position: absolute;
+	width: var(--cell-size);
+	height: var(--cell-size);
+	background-color: red;
+	z-index: 99;
+
+	transform: translate(var(--player-pos-x), var(--player-pos-y));
+}

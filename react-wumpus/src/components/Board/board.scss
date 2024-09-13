@@ -1,0 +1,18 @@
+.board {
+	--cell-size: 5rem;
+	--board-size: 10;
+
+	position: relative;
+	display: grid;
+	grid-template-columns: repeat(var(--board-size), var(--cell-size));
+	grid-template-rows: repeat(var(--board-size), var(--cell-size));
+	gap: 1rem;
+	margin: auto;
+	width: fit-content;
+
+	&__cell {
+		min-width: var(--cell-size);
+		min-height: var(--cell-size);
+		background-color: blue;
+	}
+}
