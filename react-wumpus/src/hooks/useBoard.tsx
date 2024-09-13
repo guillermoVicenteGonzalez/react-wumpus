@@ -37,6 +37,7 @@ function createObstacles(size: number): Object {
 	}
 
 	return { wumpusPos, wellPos, goldPos };
+    //
 }
 
 function createBoard(s: number) {
@@ -55,7 +56,7 @@ function createBoard(s: number) {
 
 	const obstacles = createObstacles(s);
 	for (const key in obstacles) {
-		console.log(key);
+		if(key == "WUMPUS")
 	}
 
 	return board;
