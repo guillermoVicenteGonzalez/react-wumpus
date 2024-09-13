@@ -37,7 +37,6 @@ function createObstacles(size: number): Object {
 	}
 
 	return { wumpusPos, wellPos, goldPos };
-    //
 }
 
 function createBoard(s: number) {
