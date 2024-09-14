@@ -1,29 +1,46 @@
 import { useState, useEffect } from "react";
-import { Position, type CellType } from "../types";
+import { type CELL_STATES, Position, type CellType } from "../types";
 
-function createObstacles(size: number): Object {
-	let min = 1;
+//returns an array of cells surrounding an obstacle (they have a field position) with their appropiate states set
+function surroundCells(pos: Position, limit: number) {
+	let positions: Position[] = [];
 
+	for (let i = pos.x - 1; i < pos.x + 2; i++) {
+		if (i != pos.x && i <= limit) positions.push({ x: i, y: pos.y });
+	}
+
+	for (let i = pos.y - 1; i < pos.y + 2; i++) {
+		if (i != pos.y && i <= limit) positions.push({ x: pos.x, y: i });
+	}
+
+	return positions;
+}
+
+function createObstacles(board: Array<CellType[]>, size: number) {
+	let min = 0;
+	let max = size - 1;
+
+	console.log(board);
 	let wumpusPos: Position = {
-		x: Math.floor(Math.random() * (size - min + 1)) + min,
-		y: Math.floor(Math.random() * (size - min + 1)) + min,
+		x: Math.floor(Math.random() * (max - min + 1)) + min,
+		y: Math.floor(Math.random() * (max - min + 1)) + min,
 	};
 
 	let wellPos: Position = {
-		x: Math.floor(Math.random() * (size - min + 1)) + min,
-		y: Math.floor(Math.random() * (size - min + 1)) + min,
+		x: Math.floor(Math.random() * (max - min + 1)) + min,
+		y: Math.floor(Math.random() * (max - min + 1)) + min,
 	};
 
 	while (wellPos.x === wumpusPos.x && wellPos.y === wumpusPos.y) {
 		wellPos = {
-			x: Math.floor(Math.random() * (size - min + 1)) + min,
-			y: Math.floor(Math.random() * (size - min + 1)) + min,
+			x: Math.floor(Math.random() * (max - min + 1)) + min,
+			y: Math.floor(Math.random() * (max - min + 1)) + min,
 		};
 	}
 
 	let goldPos: Position = {
-		x: Math.floor(Math.random() * (size - min + 1)) + min,
-		y: Math.floor(Math.random() * (size - min + 1)) + min,
+		x: Math.floor(Math.random() * (max - min + 1)) + min,
+		y: Math.floor(Math.random() * (max - min + 1)) + min,
 	};
 
 	while (
@@ -31,12 +48,27 @@ function createObstacles(size: number): Object {
 		(goldPos.x === wumpusPos.x && goldPos.y === wumpusPos.y)
 	) {
 		goldPos = {
-			x: Math.floor(Math.random() * (size - min + 1)) + min,
-			y: Math.floor(Math.random() * (size - min + 1)) + min,
+			x: Math.floor(Math.random() * (max - min + 1)) + min,
+			y: Math.floor(Math.random() * (max - min + 1)) + min,
 		};
 	}
 
-	return { wumpusPos, wellPos, goldPos };
+	console.log(goldPos);
+
+	board[goldPos.x][goldPos.y].states.GOLD = true;
+	board[wellPos.x][wellPos.y].states.WELL = true;
+	board[wumpusPos.x][wumpusPos.y].states.WUMPUS = true;
+
+	surroundCells(wumpusPos, size).forEach((pos) => {
+		board[pos.x][pos.y].states.STENCH = true;
+	});
+
+	surroundCells(wellPos, size).forEach((pos) => {
+		board[pos.x][pos.y].states.BREEZE = true;
+	});
+
+	console.log(board);
+	return board;
 }
 
 function createBoard(s: number) {
@@ -53,12 +85,7 @@ function createBoard(s: number) {
 		board.push(nestedBoard);
 	}
 
-	const obstacles = createObstacles(s);
-	for (const key in obstacles) {
-		if(key == "WUMPUS")
-	}
-
-	return board;
+	return createObstacles(board, s);
 }
 
 export function useBoard(size: number) {
