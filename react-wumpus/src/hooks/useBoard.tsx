@@ -6,19 +6,20 @@ function surroundCells(pos: Position, limit: number) {
 	let positions: Position[] = [];
 
 	for (let i = pos.x - 1; i < pos.x + 2; i++) {
-		if (i != pos.x && i <= limit) positions.push({ x: i, y: pos.y });
+		if (i != pos.x && i < limit && i >= 0) positions.push({ x: i, y: pos.y });
 	}
 
 	for (let i = pos.y - 1; i < pos.y + 2; i++) {
-		if (i != pos.y && i <= limit) positions.push({ x: pos.x, y: i });
+		if (i != pos.y && i < limit && i >= 0) positions.push({ x: pos.x, y: i });
 	}
 
+	console.log(positions);
 	return positions;
 }
 
 function createObstacles(board: Array<CellType[]>, size: number) {
 	let min = 0;
-	let max = size - 1;
+	let max = 9;
 
 	console.log(board);
 	let wumpusPos: Position = {
@@ -54,6 +55,8 @@ function createObstacles(board: Array<CellType[]>, size: number) {
 	}
 
 	console.log(goldPos);
+	console.log(wellPos);
+	console.log(wumpusPos);
 
 	board[goldPos.x][goldPos.y].states.GOLD = true;
 	board[wellPos.x][wellPos.y].states.WELL = true;
