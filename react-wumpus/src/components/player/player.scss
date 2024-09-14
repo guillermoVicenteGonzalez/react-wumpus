@@ -3,8 +3,8 @@
 	--player-pos-y: 1;
 
 	position: absolute;
-	width: var(--cell-size);
-	height: var(--cell-size);
+	width: calc(var(--cell-size) / 3);
+	height: calc(var(--cell-size) / 3);
 	background-color: red;
 	z-index: 99;
 

@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import "./App.css";
 import Board from "./components/Board/Board";
+import usePlayerPos from "./hooks/usePlayerPos";
 
 function App() {
 	const [count, setCount] = useState(10);

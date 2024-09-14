@@ -50,14 +50,13 @@ const Board: React.FC<Props> = ({ size = 10 }) => {
 	//se multiplican los indices por el tamaño de celda => posicion
 	function movePlayer({ x, y }: Position) {
 		visitCell(playerPos);
-		console.log("setting player pos");
+		//check wumpus / well
 		let err = updatePlayerPos({ x, y });
 		if (err === -1) {
 			setModalVisible(true);
 			setErrorMsg("The player is out of bounds");
 		}
 
-		//check wumpus / well
 		//uncover next cell
 	}
 

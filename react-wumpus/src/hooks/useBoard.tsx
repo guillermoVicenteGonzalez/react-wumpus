@@ -13,7 +13,6 @@ function surroundCells(pos: Position, limit: number) {
 		if (i != pos.y && i < limit && i >= 0) positions.push({ x: pos.x, y: i });
 	}
 
-	console.log(positions);
 	return positions;
 }
 
@@ -21,7 +20,6 @@ function createObstacles(board: Array<CellType[]>, size: number) {
 	let min = 0;
 	let max = 9;
 
-	console.log(board);
 	let wumpusPos: Position = {
 		x: Math.floor(Math.random() * (max - min + 1)) + min,
 		y: Math.floor(Math.random() * (max - min + 1)) + min,
@@ -54,10 +52,6 @@ function createObstacles(board: Array<CellType[]>, size: number) {
 		};
 	}
 
-	console.log(goldPos);
-	console.log(wellPos);
-	console.log(wumpusPos);
-
 	board[goldPos.x][goldPos.y].states.GOLD = true;
 	board[wellPos.x][wellPos.y].states.WELL = true;
 	board[wumpusPos.x][wumpusPos.y].states.WUMPUS = true;
@@ -70,7 +64,6 @@ function createObstacles(board: Array<CellType[]>, size: number) {
 		board[pos.x][pos.y].states.BREEZE = true;
 	});
 
-	console.log(board);
 	return board;
 }
 

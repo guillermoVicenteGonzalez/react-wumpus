@@ -4,11 +4,13 @@ $well-color: aliceblue;
 $default-color: brown;
 
 .cell {
+	position: relative;
 	min-width: var(--cell-size);
 	min-height: var(--cell-size);
 	background-color: $default-color;
 
 	&::before {
+		position: absolute;
 		display: block;
 		content: " ";
 		background-color: blue;

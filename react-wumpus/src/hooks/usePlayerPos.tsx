@@ -8,7 +8,6 @@ export default function usePlayerPos(startingPos: Position, limit: number) {
 
 	function updatePlayerPos(nPos: Position) {
 		if (nPos.x > limit || nPos.y > limit || nPos.x <= 0 || nPos.y <= 0) {
-			console.log("position out of bounds");
 			return -1;
 		} else {
 			setPlayerPos(nPos);
