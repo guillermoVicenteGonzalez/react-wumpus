@@ -1,15 +1,6 @@
 import { useEffect, useState } from "react";
 import "./player.scss";
-
-export type Position = {
-	x: number;
-	y: number;
-};
-
-type AbsolutePosition = {
-	x: string;
-	y: string;
-};
+import { type Position } from "../../types";
 
 interface Props {
 	position?: Position;

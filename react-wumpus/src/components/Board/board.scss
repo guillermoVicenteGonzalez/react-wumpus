@@ -10,13 +10,6 @@
 	margin: auto;
 	width: fit-content;
 
-	&__cell {
-		min-width: var(--cell-size);
-		min-height: var(--cell-size);
-		background-color: blue;
-
-		&--discovered {
-			background-color: green;
-		}
-	}
+	justify-items: center;
+	align-items: center;
 }

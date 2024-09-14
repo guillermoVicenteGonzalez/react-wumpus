@@ -1,25 +1,32 @@
-import { type CellType } from "../../constants";
 import { useEffect, useState } from "react";
 import "./board.scss";
 import Player from "../player/player";
-import { type Position } from "../player/player";
+import { type Position, type CellType } from "../../types";
+import Cell from "./Cell";
+import { useBoard } from "../../hooks/useBoard";
+import usePlayerPos from "../../hooks/usePlayerPos";
+import Modal from "../modal/Modal";
 
 interface Props {
 	size: number;
 }
 
-const Board: React.FC<Props> = ({ size = 10 }) => {
-	const [board, setBoard] = useState<Array<CellType[]>>([]);
-	const [playerPos, setPlayerPos] = useState<Position>({ x: 5, y: 5 });
+const startingPos: Position = { x: 1, y: 1 };
 
-	useEffect(() => {
-		let nBoard = createBoard(size);
-		console.log(nBoard);
-		setBoard(nBoard);
-	}, [size]);
+const Board: React.FC<Props> = ({ size = 10 }) => {
+	// const [playerPos, setPlayerPos] = useState<Position>(startingPos);
+	const { playerPos, updatePlayerPos } = usePlayerPos(startingPos, size);
+	const { board, visitCell } = useBoard(size);
+	const [errorMsg, setErrorMsg] = useState<string>("");
+	const [modalVisible, setModalVisible] = useState<boolean>(false);
+
+	function handleCloseModal() {
+		setModalVisible(false);
+	}
 
 	function handleKeyPress(event: React.KeyboardEvent<HTMLDivElement>) {
-		let tempPos: Position = playerPos;
+		let tempPos: Position = { ...playerPos };
+		if (modalVisible) return;
 
 		if (event.code === "ArrowUp" || event.code === "w") {
 			tempPos.y--;
@@ -42,23 +49,15 @@ const Board: React.FC<Props> = ({ size = 10 }) => {
 
 	//se multiplican los indices por el tamaño de celda => posicion
 	function movePlayer({ x, y }: Position) {
-		//check out of bounds
+		visitCell(playerPos);
 		//check wumpus / well
-		//uncover next cell
-		setPlayerPos({ x, y });
-	}
-
-	function createBoard(s: number) {
-		let board: Array<CellType[]> = [];
-		for (let i = 0; i < s; i++) {
-			let nestedBoard: CellType[] = [];
-			// let nestedBoard: CellType[] = new Array(s).fill("WUMPUS");
-			for (let j = 0; j < size; j++) {
-				nestedBoard.push("WUMPUS");
-			}
-			board.push(nestedBoard);
+		let err = updatePlayerPos({ x, y });
+		if (err === -1) {
+			setModalVisible(true);
+			setErrorMsg("The player is out of bounds");
 		}
-		return board;
+
+		//uncover next cell
 	}
 
 	const dinamicBoardStyes = {
@@ -74,11 +73,29 @@ const Board: React.FC<Props> = ({ size = 10 }) => {
 			tabIndex={0}
 		>
 			<Player position={playerPos}></Player>
-			{board.map((row, index) => {
-				return row.map((cell, i) => {
-					return <div key={i} className="board__cell"></div>;
+			{board.map((row) => {
+				return row.map(({ states, visited, position }: CellType) => {
+					return (
+						<Cell
+							states={states}
+							key={position.x + position.y}
+							position={position}
+							visited={visited}
+						></Cell>
+					);
 				});
 			})}
+
+			<footer>
+				<h1>Debug</h1>
+				<h2>
+					Player pos x: {playerPos.x} y: {playerPos.y}
+				</h2>
+			</footer>
+
+			<Modal visible={modalVisible} onModalClose={handleCloseModal}>
+				<h1>{errorMsg}</h1>
+			</Modal>
 		</div>
 	);
 };
