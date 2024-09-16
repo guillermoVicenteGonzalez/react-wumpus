@@ -1,24 +1,23 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "./board.scss";
 import Player from "../player/player";
 import { type Position, type CellType } from "../../types";
 import Cell from "./Cell";
 import { useBoard } from "../../hooks/useBoard";
-import usePlayerPos from "../../hooks/usePlayerPos";
 import Modal from "../modal/Modal";
+import { PlayerPosContext } from "../../contexts/positionContext";
 
 interface Props {
 	size: number;
 }
 
-const startingPos: Position = { x: 1, y: 1 };
-
 const Board: React.FC<Props> = ({ size = 10 }) => {
-	// const [playerPos, setPlayerPos] = useState<Position>(startingPos);
-	const { playerPos, updatePlayerPos } = usePlayerPos(startingPos, size);
 	const { board, visitCell } = useBoard(size);
 	const [errorMsg, setErrorMsg] = useState<string>("");
 	const [modalVisible, setModalVisible] = useState<boolean>(false);
+	const { playerPos, updatePlayerPos } = useContext(PlayerPosContext);
+
+	console.log(playerPos);
 
 	function handleCloseModal() {
 		setModalVisible(false);

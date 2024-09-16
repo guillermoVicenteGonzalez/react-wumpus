@@ -5,7 +5,7 @@ A World of wumpus clone made using react + ts
 ## To do
 
 - [ ] basics
-  - [ ] cell colors
+  - [x] cell colors
   - [ ] Create reducer / context
   - [ ] Obstacles cannot be in the starting pos (maybe create a constant?)
 - [ ] styles
