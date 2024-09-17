@@ -12,12 +12,10 @@ interface Props {
 }
 
 const Board: React.FC<Props> = ({ size = 10 }) => {
-	const { board, visitCell } = useBoard(size);
+	const { board, visitCell, checkCell } = useBoard(size);
 	const [errorMsg, setErrorMsg] = useState<string>("");
 	const [modalVisible, setModalVisible] = useState<boolean>(false);
 	const { playerPos, updatePlayerPos } = useContext(PlayerPosContext);
-
-	console.log(playerPos);
 
 	function handleCloseModal() {
 		setModalVisible(false);
@@ -48,12 +46,24 @@ const Board: React.FC<Props> = ({ size = 10 }) => {
 
 	//se multiplican los indices por el tamaño de celda => posicion
 	function movePlayer({ x, y }: Position) {
+		//visit the previous cell (just in case)
 		visitCell(playerPos);
-		//check wumpus / well
+
 		let err = updatePlayerPos({ x, y });
 		if (err === -1) {
 			setModalVisible(true);
 			setErrorMsg("The player is out of bounds");
+			return;
+		}
+
+		//check wumpus / well
+		visitCell({ x, y });
+		// if (board[x - 1][y - 1].states.WUMPUS || board[x - 1][y - 1].states.WELL) {
+		if (checkCell({ x, y }).states.WUMPUS || checkCell({ x, y }).states.WELL) {
+			setModalVisible(true);
+			setErrorMsg("Game over");
+			//reset game
+			return;
 		}
 
 		//uncover next cell

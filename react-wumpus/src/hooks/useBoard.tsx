@@ -93,10 +93,14 @@ export function useBoard(size: number) {
 		setBoard(auxBoard);
 	}
 
+	function checkCell({ x, y }: Position): CellType {
+		return board[y - 1][x - 1];
+	}
+
 	useEffect(() => {
 		let nBoard = createBoard(size);
 		setBoard(nBoard);
 	}, [size]);
 
-	return { board, visitCell };
+	return { board, visitCell, checkCell };
 }
