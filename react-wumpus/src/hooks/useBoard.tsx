@@ -16,53 +16,58 @@ function surroundCells(pos: Position, limit: number) {
 	return positions;
 }
 
+function randomPosition(min: number, max: number) {
+	return {
+		x: Math.floor(Math.random() * (max - min + 1)) + min,
+		y: Math.floor(Math.random() * (max - min + 1)) + min,
+	} as Position;
+}
+
+function comparePosition(pos1: Position, pos2: Position) {
+	if (pos1.x === pos2.x && pos1.y === pos2.y) return true;
+	return false;
+}
+
 function createObstacles(board: Array<CellType[]>, size: number) {
+	const startingPos: Position = { x: 1, y: 1 };
+	let nWells = size / 4 - 1;
+
 	let min = 0;
 	let max = 9;
 
-	let wumpusPos: Position = {
-		x: Math.floor(Math.random() * (max - min + 1)) + min,
-		y: Math.floor(Math.random() * (max - min + 1)) + min,
-	};
+	let obstacles: Position[] = [];
 
-	let wellPos: Position = {
-		x: Math.floor(Math.random() * (max - min + 1)) + min,
-		y: Math.floor(Math.random() * (max - min + 1)) + min,
-	};
-
-	while (wellPos.x === wumpusPos.x && wellPos.y === wumpusPos.y) {
-		wellPos = {
-			x: Math.floor(Math.random() * (max - min + 1)) + min,
-			y: Math.floor(Math.random() * (max - min + 1)) + min,
-		};
+	//first we setup the well
+	for (let i = 0; i < nWells; i++) {
+		let wellPos = randomPosition(min, max);
+		while (obstacles.some((pos) => comparePosition(pos, wellPos))) {
+			wellPos = randomPosition(min, max);
+		}
+		obstacles.push(wellPos);
+		board[wellPos.x][wellPos.y].states.WELL = true;
+		surroundCells(wellPos, size).forEach((pos) => {
+			board[pos.x][pos.y].states.BREEZE = true;
+		});
 	}
 
-	let goldPos: Position = {
-		x: Math.floor(Math.random() * (max - min + 1)) + min,
-		y: Math.floor(Math.random() * (max - min + 1)) + min,
-	};
-
-	while (
-		(wellPos.x === goldPos.x && wellPos.y === goldPos.y) ||
-		(goldPos.x === wumpusPos.x && goldPos.y === wumpusPos.y)
-	) {
-		goldPos = {
-			x: Math.floor(Math.random() * (max - min + 1)) + min,
-			y: Math.floor(Math.random() * (max - min + 1)) + min,
-		};
+	//now we setup the wumpus
+	let wumpusPos = randomPosition(min, max);
+	while (obstacles.some((pos) => comparePosition(pos, wumpusPos))) {
+		wumpusPos = randomPosition(min, max);
 	}
-
-	board[goldPos.x][goldPos.y].states.GOLD = true;
-	board[wellPos.x][wellPos.y].states.WELL = true;
+	obstacles.push(wumpusPos);
 	board[wumpusPos.x][wumpusPos.y].states.WUMPUS = true;
-
 	surroundCells(wumpusPos, size).forEach((pos) => {
 		board[pos.x][pos.y].states.STENCH = true;
 	});
 
-	surroundCells(wellPos, size).forEach((pos) => {
-		board[pos.x][pos.y].states.BREEZE = true;
-	});
+	//lastly we setup the gold
+	let goldPos = randomPosition(min, max);
+	while (obstacles.some((pos) => comparePosition(pos, goldPos))) {
+		goldPos = randomPosition(min, max);
+	}
+	obstacles.push(goldPos);
+	board[goldPos.x][goldPos.y].states.GOLD = true;
 
 	return board;
 }
