@@ -10,8 +10,8 @@ A World of wumpus clone made using react + ts
     - The reducer is redundant / adds to much complexity ?
   - [ ] Obstacles cannot be in the starting pos (maybe create a constant?)
 - [ ] styles
-- [ ] game logic
-- [ ] Self play (backtracking)
+- [x] game logic
+- [ ] Self play (backtracking?)
 
 ## Notes
 

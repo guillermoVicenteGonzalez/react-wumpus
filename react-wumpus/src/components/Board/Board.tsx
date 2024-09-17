@@ -12,13 +12,34 @@ interface Props {
 }
 
 const Board: React.FC<Props> = ({ size = 10 }) => {
-	const { board, visitCell, checkCell } = useBoard(size);
+	const [gameOver, setGameOver] = useState(false);
+	const { board, visitCell, checkCell, resetBoard } = useBoard(size);
 	const [errorMsg, setErrorMsg] = useState<string>("");
 	const [modalVisible, setModalVisible] = useState<boolean>(false);
 	const { playerPos, updatePlayerPos } = useContext(PlayerPosContext);
+	const [hasGold, setHasGold] = useState(false);
+
+	useEffect(() => {
+		if (gameOver) {
+			//modal
+			setModalVisible(true);
+			setErrorMsg("Game over");
+
+			//cleanup
+			gameCleanup();
+
+			//setGameOver(false)
+		}
+	}, [gameOver]);
 
 	function handleCloseModal() {
 		setModalVisible(false);
+	}
+
+	function gameCleanup() {
+		resetBoard();
+		updatePlayerPos({ x: 1, y: 1 });
+		setHasGold(false);
 	}
 
 	function handleKeyPress(event: React.KeyboardEvent<HTMLDivElement>) {
@@ -58,13 +79,12 @@ const Board: React.FC<Props> = ({ size = 10 }) => {
 
 		//check wumpus / well
 		visitCell({ x, y });
-		// if (board[x - 1][y - 1].states.WUMPUS || board[x - 1][y - 1].states.WELL) {
 		if (checkCell({ x, y }).states.WUMPUS || checkCell({ x, y }).states.WELL) {
-			setModalVisible(true);
-			setErrorMsg("Game over");
-			//reset game
+			setGameOver(true);
 			return;
 		}
+
+		if (checkCell({ x, y }).states.GOLD) setHasGold(true);
 
 		//uncover next cell
 	}
@@ -81,7 +101,7 @@ const Board: React.FC<Props> = ({ size = 10 }) => {
 			onKeyDown={handleKeyPress}
 			tabIndex={0}
 		>
-			<Player position={playerPos}></Player>
+			<Player position={playerPos} hasGold={hasGold}></Player>
 			{board.map((row) => {
 				return row.map(({ states, visited, position }: CellType) => {
 					return (

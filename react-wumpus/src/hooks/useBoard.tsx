@@ -84,7 +84,7 @@ function createBoard(s: number) {
 	return createObstacles(board, s);
 }
 
-export function useBoard(size: number) {
+export function useBoard(size: number = 10) {
 	const [board, setBoard] = useState<Array<CellType[]>>([]);
 
 	function visitCell({ x, y }: Position) {
@@ -97,10 +97,19 @@ export function useBoard(size: number) {
 		return board[y - 1][x - 1];
 	}
 
+	function resetBoard() {
+		let nBoard = createBoard(size);
+		setBoard(nBoard);
+	}
+
 	useEffect(() => {
 		let nBoard = createBoard(size);
 		setBoard(nBoard);
+	}, []);
+
+	useEffect(() => {
+		//resize board?
 	}, [size]);
 
-	return { board, visitCell, checkCell };
+	return { board, visitCell, checkCell, resetBoard };
 }
