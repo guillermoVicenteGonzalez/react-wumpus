@@ -5,12 +5,6 @@ const Cell: React.FC<CellType> = ({ position, visited, states }) => {
 	const cellState = visited ? "cell--visited" : "";
 	function cellColor() {
 		let colors: string[] = [];
-		if (states.GOLD == true) {
-			colors.push("gold");
-		}
-		if (states.WUMPUS == true) {
-			colors.push("green");
-		}
 
 		if (states.BREEZE == true) {
 			colors.push("aliceblue");
@@ -20,8 +14,19 @@ const Cell: React.FC<CellType> = ({ position, visited, states }) => {
 			colors.push("greenyellow");
 		}
 
+		if (states.GOLD == true) {
+			colors = ["gold"];
+		}
+
+		if (states.WUMPUS == true) {
+			colors = ["green"];
+		}
+
 		if (states.WELL == true) {
-			colors.push("black");
+			colors = ["black"];
+		}
+		if (states.START) {
+			colors = ["purple"];
 		}
 
 		if (colors.length > 1) {

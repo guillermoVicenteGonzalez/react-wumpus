@@ -29,13 +29,16 @@ function comparePosition(pos1: Position, pos2: Position) {
 }
 
 function createObstacles(board: Array<CellType[]>, size: number) {
-	const startingPos: Position = { x: 1, y: 1 };
+	const startingPos: Position = { x: 0, y: 0 };
 	let nWells = size / 4 - 1;
 
 	let min = 0;
 	let max = 9;
 
 	let obstacles: Position[] = [];
+	obstacles.push(startingPos);
+	board[startingPos.x][startingPos.y].states.START = true;
+	board[startingPos.x][startingPos.y].visited = true;
 
 	//first we setup the well
 	for (let i = 0; i < nWells; i++) {

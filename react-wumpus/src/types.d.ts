@@ -19,6 +19,7 @@ type CellStates = {
 	STENCH?: boolean;
 	WELL?: boolean;
 	GOLD?: boolean;
+	START?: boolean;
 };
 
 export type CellType = {
