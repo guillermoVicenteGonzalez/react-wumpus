@@ -31,7 +31,7 @@ const Cell: React.FC<CellType> = ({ position, visited, states }) => {
 
 		if (colors.length > 1) {
 			return {
-				"background-image": `linear-gradient(${colors.toString()})`,
+				backgroundImage: `linear-gradient(${colors.toString()})`,
 			} as React.CSSProperties;
 		} else {
 			return { backgroundColor: colors.toString() } as React.CSSProperties;

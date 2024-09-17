@@ -4,11 +4,11 @@ A World of wumpus clone made using react + ts
 
 ## To do
 
-- [ ] basics
+- [x] basics
   - [x] cell colors
   - [x] Create reducer / context
     - The reducer is redundant / adds to much complexity ?
-  - [ ] Obstacles cannot be in the starting pos (maybe create a constant?)
+  - [x] Obstacles cannot be in the starting pos
 - [ ] styles
 - [x] game logic
 - [ ] Self play (backtracking?)

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import "./board.scss";
 import Player from "../player/player";
 import { type Position, type CellType } from "../../types";
@@ -19,22 +19,25 @@ const Board: React.FC<Props> = ({ size = 10 }) => {
 	const { playerPos, updatePlayerPos } = useContext(PlayerPosContext);
 	const [hasGold, setHasGold] = useState(false);
 
+	function modalCallback() {
+		console.log(gameOver);
+		if (gameOver) {
+			gameCleanup();
+			setGameOver(false);
+		}
+		setModalVisible(false);
+	}
+
 	useEffect(() => {
 		if (gameOver) {
 			//modal
 			setModalVisible(true);
 			setErrorMsg("Game over");
-
 			//cleanup
-			gameCleanup();
 
 			//setGameOver(false)
 		}
 	}, [gameOver]);
-
-	function handleCloseModal() {
-		setModalVisible(false);
-	}
 
 	function gameCleanup() {
 		resetBoard();
@@ -74,12 +77,17 @@ const Board: React.FC<Props> = ({ size = 10 }) => {
 		if (err === -1) {
 			setModalVisible(true);
 			setErrorMsg("The player is out of bounds");
+
 			return;
 		}
 
 		//check wumpus / well
 		visitCell({ x, y });
-		if (checkCell({ x, y }).states.WUMPUS || checkCell({ x, y }).states.WELL) {
+		console.log(checkCell({ x, y }).states);
+		if (
+			checkCell({ x, y }).states.WUMPUS === true ||
+			checkCell({ x, y }).states.WELL === true
+		) {
 			setGameOver(true);
 			return;
 		}
@@ -122,7 +130,7 @@ const Board: React.FC<Props> = ({ size = 10 }) => {
 				</h2>
 			</footer>
 
-			<Modal visible={modalVisible} onModalClose={handleCloseModal}>
+			<Modal visible={modalVisible} onModalClose={modalCallback}>
 				<h1>{errorMsg}</h1>
 			</Modal>
 		</div>
