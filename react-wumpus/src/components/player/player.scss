@@ -11,4 +11,9 @@
 	// transform: translate(var(--player-pos-x), var(--player-pos-y));
 	grid-row: var(--player-pos-y) / calc(1 + var(--player-pos-y));
 	grid-column: var(--player-pos-x) / calc(1 + var(--player-pos-x));
+
+	&--gold {
+		background-color: gold;
+		border: solid 1px black;
+	}
 }

@@ -1,27 +1,48 @@
-import { useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import "./board.scss";
 import Player from "../player/player";
 import { type Position, type CellType } from "../../types";
 import Cell from "./Cell";
 import { useBoard } from "../../hooks/useBoard";
-import usePlayerPos from "../../hooks/usePlayerPos";
 import Modal from "../modal/Modal";
+import { PlayerPosContext } from "../../contexts/positionContext";
 
 interface Props {
 	size: number;
 }
 
-const startingPos: Position = { x: 1, y: 1 };
-
 const Board: React.FC<Props> = ({ size = 10 }) => {
-	// const [playerPos, setPlayerPos] = useState<Position>(startingPos);
-	const { playerPos, updatePlayerPos } = usePlayerPos(startingPos, size);
-	const { board, visitCell } = useBoard(size);
+	const [gameOver, setGameOver] = useState(false);
+	const { board, visitCell, checkCell, resetBoard } = useBoard(size);
 	const [errorMsg, setErrorMsg] = useState<string>("");
 	const [modalVisible, setModalVisible] = useState<boolean>(false);
+	const { playerPos, updatePlayerPos } = useContext(PlayerPosContext);
+	const [hasGold, setHasGold] = useState(false);
 
-	function handleCloseModal() {
+	function modalCallback() {
+		console.log(gameOver);
+		if (gameOver) {
+			gameCleanup();
+			setGameOver(false);
+		}
 		setModalVisible(false);
+	}
+
+	useEffect(() => {
+		if (gameOver) {
+			//modal
+			setModalVisible(true);
+			setErrorMsg("Game over");
+			//cleanup
+
+			//setGameOver(false)
+		}
+	}, [gameOver]);
+
+	function gameCleanup() {
+		resetBoard();
+		updatePlayerPos({ x: 1, y: 1 });
+		setHasGold(false);
 	}
 
 	function handleKeyPress(event: React.KeyboardEvent<HTMLDivElement>) {
@@ -49,13 +70,29 @@ const Board: React.FC<Props> = ({ size = 10 }) => {
 
 	//se multiplican los indices por el tamaño de celda => posicion
 	function movePlayer({ x, y }: Position) {
+		//visit the previous cell (just in case)
 		visitCell(playerPos);
-		//check wumpus / well
+
 		let err = updatePlayerPos({ x, y });
 		if (err === -1) {
 			setModalVisible(true);
 			setErrorMsg("The player is out of bounds");
+
+			return;
 		}
+
+		//check wumpus / well
+		visitCell({ x, y });
+		console.log(checkCell({ x, y }).states);
+		if (
+			checkCell({ x, y }).states.WUMPUS === true ||
+			checkCell({ x, y }).states.WELL === true
+		) {
+			setGameOver(true);
+			return;
+		}
+
+		if (checkCell({ x, y }).states.GOLD) setHasGold(true);
 
 		//uncover next cell
 	}
@@ -72,7 +109,7 @@ const Board: React.FC<Props> = ({ size = 10 }) => {
 			onKeyDown={handleKeyPress}
 			tabIndex={0}
 		>
-			<Player position={playerPos}></Player>
+			<Player position={playerPos} hasGold={hasGold}></Player>
 			{board.map((row) => {
 				return row.map(({ states, visited, position }: CellType) => {
 					return (
@@ -93,7 +130,7 @@ const Board: React.FC<Props> = ({ size = 10 }) => {
 				</h2>
 			</footer>
 
-			<Modal visible={modalVisible} onModalClose={handleCloseModal}>
+			<Modal visible={modalVisible} onModalClose={modalCallback}>
 				<h1>{errorMsg}</h1>
 			</Modal>
 		</div>
