@@ -1,0 +1,15 @@
+$wumpus-color: rgb(29, 129, 4);
+$stench-color: rgb(183, 221, 14);
+$breeze-color: rgb(167, 214, 255);
+$well-color: black;
+$player-color: red;
+$start-color: purple;
+
+:root {
+	--wumpus-color: #{$wumpus-color};
+	--stench-color: #{$stench-color};
+	--breeze-color: #{$breeze-color};
+	--well-color: #{$well-color};
+	--player-color: #{$player-color};
+	--start-color: #{$start-color};
+}
