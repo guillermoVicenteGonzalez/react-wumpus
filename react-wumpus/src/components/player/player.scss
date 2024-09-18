@@ -17,7 +17,7 @@
 	grid-column: var(--player-pos-x) / calc(1 + var(--player-pos-x));
 
 	&--gold {
-		background-color: gold;
+		background-color: var(--gold-color);
 		border: solid 1px black;
 	}
 }

@@ -4,6 +4,7 @@ $breeze-color: rgb(167, 214, 255);
 $well-color: black;
 $player-color: red;
 $start-color: purple;
+$gold-color: gold;
 
 :root {
 	--wumpus-color: #{$wumpus-color};
@@ -12,4 +13,5 @@ $start-color: purple;
 	--well-color: #{$well-color};
 	--player-color: #{$player-color};
 	--start-color: #{$start-color};
+	--gold-color: #{$gold-color};
 }

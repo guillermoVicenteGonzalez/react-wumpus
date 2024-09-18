@@ -33,7 +33,7 @@ function createObstacles(board: Array<CellType[]>, size: number) {
 	let nWells = size / 4 - 1;
 
 	let min = 0;
-	let max = 9;
+	let max = size - 1;
 
 	let obstacles: Position[] = [];
 	obstacles.push(startingPos);
@@ -89,7 +89,7 @@ function createBoard(s: number) {
 		board.push(nestedBoard);
 	}
 
-	return createObstacles(board, s);
+	return createObstacles(board, board.length);
 }
 
 export function useBoard(size: number = 10) {
@@ -113,7 +113,7 @@ export function useBoard(size: number = 10) {
 	useEffect(() => {
 		let nBoard = createBoard(size);
 		setBoard(nBoard);
-	}, []);
+	}, [size]);
 
 	useEffect(() => {
 		//resize board?
