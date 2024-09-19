@@ -9,9 +9,10 @@ import { PlayerPosContext } from "../../contexts/positionContext";
 
 interface Props {
 	size: number;
+	className?: string;
 }
 
-const Board: React.FC<Props> = ({ size = 10 }) => {
+const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
 	const [gameOver, setGameOver] = useState(false);
 	const { board, visitCell, checkCell, resetBoard } = useBoard(size);
 	const [errorMsg, setErrorMsg] = useState<string>("");
@@ -30,14 +31,17 @@ const Board: React.FC<Props> = ({ size = 10 }) => {
 
 	useEffect(() => {
 		if (gameOver) {
-			//modal
 			setModalVisible(true);
 			setErrorMsg("Game over");
-			//cleanup
-
-			//setGameOver(false)
 		}
 	}, [gameOver]);
+
+	// useEffect(() => {
+	// 	if (hasGold && checkCell(playerPos).states.START) {
+	// 		setModalVisible(true);
+	// 		setErrorMsg("Game finished");
+	// 	}
+	// }, [playerPos]);
 
 	function gameCleanup() {
 		resetBoard();
@@ -71,6 +75,7 @@ const Board: React.FC<Props> = ({ size = 10 }) => {
 	//se multiplican los indices por el tamaño de celda => posicion
 	function movePlayer({ x, y }: Position) {
 		//visit the previous cell (just in case)
+		let playerHasGold: boolean = hasGold;
 		visitCell(playerPos);
 
 		let err = updatePlayerPos({ x, y });
@@ -92,9 +97,15 @@ const Board: React.FC<Props> = ({ size = 10 }) => {
 			return;
 		}
 
-		if (checkCell({ x, y }).states.GOLD) setHasGold(true);
+		if (checkCell({ x, y }).states.GOLD) {
+			playerHasGold = true;
+			setHasGold(playerHasGold);
+		}
 
-		//uncover next cell
+		if (playerHasGold && checkCell({ x, y }).states.START) {
+			setModalVisible(true);
+			setErrorMsg("Game finished");
+		}
 	}
 
 	const dinamicBoardStyes = {
@@ -104,7 +115,7 @@ const Board: React.FC<Props> = ({ size = 10 }) => {
 
 	return (
 		<div
-			className="board"
+			className={`board ${className}`}
 			style={dinamicBoardStyes}
 			onKeyDown={handleKeyPress}
 			tabIndex={0}

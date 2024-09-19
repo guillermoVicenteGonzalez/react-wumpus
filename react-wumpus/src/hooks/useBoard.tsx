@@ -30,7 +30,7 @@ function comparePosition(pos1: Position, pos2: Position) {
 
 function createObstacles(board: Array<CellType[]>, size: number) {
 	const startingPos: Position = { x: 0, y: 0 };
-	let nWells = size / 4 - 1;
+	let nWells = size / 4;
 
 	let min = 0;
 	let max = size - 1;
