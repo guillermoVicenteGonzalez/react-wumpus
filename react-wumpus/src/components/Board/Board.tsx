@@ -6,6 +6,7 @@ import Cell from "./Cell";
 import { useBoard } from "../../hooks/useBoard";
 import Modal from "../modal/Modal";
 import { PlayerPosContext } from "../../contexts/positionContext";
+import { useGameState } from "../../hooks/useGameState";
 
 interface Props {
 	size: number;
@@ -15,12 +16,12 @@ interface Props {
 type GameState = "VICTORY" | "GAME OVER" | "PLAYING";
 
 const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
-	const [gameState, setGameState] = useState<GameState>("PLAYING");
 	const { board, visitCell, checkCell, resetBoard } = useBoard(size);
 	const [errorMsg, setErrorMsg] = useState<string>("");
 	const [modalVisible, setModalVisible] = useState<boolean>(false);
 	const { playerPos, updatePlayerPos } = useContext(PlayerPosContext);
 	const [hasGold, setHasGold] = useState(false);
+	const { gameState, setGameState } = useGameState("PLAYING", onStateChange);
 
 	function modalCallback() {
 		if (gameState === "GAME OVER" || gameState === "VICTORY") {
@@ -29,15 +30,15 @@ const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
 		setModalVisible(false);
 	}
 
-	useEffect(() => {
-		if (gameState === "GAME OVER") {
+	function onStateChange(state: GameState) {
+		if (state === "GAME OVER") {
 			setModalVisible(true);
 			setErrorMsg("Game over");
-		} else if (gameState === "VICTORY") {
+		} else if (state === "VICTORY") {
 			setModalVisible(true);
 			setErrorMsg("VICTORY !!!");
 		}
-	}, [gameState]);
+	}
 
 	function gameCleanup() {
 		resetBoard();
