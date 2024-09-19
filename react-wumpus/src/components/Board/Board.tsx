@@ -12,8 +12,10 @@ interface Props {
 	className?: string;
 }
 
+type GameState = "VICTORY" | "GAME OVER" | "PLAYING";
+
 const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
-	const [gameOver, setGameOver] = useState(false);
+	const [gameState, setGameState] = useState<GameState>("PLAYING");
 	const { board, visitCell, checkCell, resetBoard } = useBoard(size);
 	const [errorMsg, setErrorMsg] = useState<string>("");
 	const [modalVisible, setModalVisible] = useState<boolean>(false);
@@ -21,32 +23,27 @@ const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
 	const [hasGold, setHasGold] = useState(false);
 
 	function modalCallback() {
-		console.log(gameOver);
-		if (gameOver) {
+		if (gameState === "GAME OVER" || gameState === "VICTORY") {
 			gameCleanup();
-			setGameOver(false);
 		}
 		setModalVisible(false);
 	}
 
 	useEffect(() => {
-		if (gameOver) {
+		if (gameState === "GAME OVER") {
 			setModalVisible(true);
 			setErrorMsg("Game over");
+		} else if (gameState === "VICTORY") {
+			setModalVisible(true);
+			setErrorMsg("VICTORY !!!");
 		}
-	}, [gameOver]);
-
-	// useEffect(() => {
-	// 	if (hasGold && checkCell(playerPos).states.START) {
-	// 		setModalVisible(true);
-	// 		setErrorMsg("Game finished");
-	// 	}
-	// }, [playerPos]);
+	}, [gameState]);
 
 	function gameCleanup() {
 		resetBoard();
 		updatePlayerPos({ x: 1, y: 1 });
 		setHasGold(false);
+		setGameState("PLAYING");
 	}
 
 	function handleKeyPress(event: React.KeyboardEvent<HTMLDivElement>) {
@@ -72,7 +69,7 @@ const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
 		movePlayer(tempPos);
 	}
 
-	//se multiplican los indices por el tamaño de celda => posicion
+	//this could / should be a useEffect ?
 	function movePlayer({ x, y }: Position) {
 		//visit the previous cell (just in case)
 		let playerHasGold: boolean = hasGold;
@@ -93,7 +90,7 @@ const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
 			checkCell({ x, y }).states.WUMPUS === true ||
 			checkCell({ x, y }).states.WELL === true
 		) {
-			setGameOver(true);
+			setGameState("GAME OVER");
 			return;
 		}
 
@@ -103,8 +100,7 @@ const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
 		}
 
 		if (playerHasGold && checkCell({ x, y }).states.START) {
-			setModalVisible(true);
-			setErrorMsg("Game finished");
+			setGameState("VICTORY");
 		}
 	}
 
