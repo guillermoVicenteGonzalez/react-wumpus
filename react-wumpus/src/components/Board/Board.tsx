@@ -7,6 +7,8 @@ import { useBoard } from "../../hooks/useBoard";
 import Modal from "../modal/Modal";
 import { PlayerPosContext } from "../../contexts/positionContext";
 import { useGameState } from "../../hooks/useGameState";
+import { useInput } from "../../hooks/useInput";
+import type { Inputs } from "../../hooks/useInput";
 
 interface Props {
 	size: number;
@@ -22,6 +24,44 @@ const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
 	const { playerPos, updatePlayerPos } = useContext(PlayerPosContext);
 	const [hasGold, setHasGold] = useState(false);
 	const { gameState, setGameState } = useGameState("PLAYING", onStateChange);
+	const { input, playerInputEvent } = useInput();
+
+	useEffect(() => {
+		document.addEventListener(playerInputEvent.current.type, handleInput);
+
+		return () => {
+			document.removeEventListener(playerInputEvent.current.type, handleInput);
+		};
+	}, [playerInputEvent, board]);
+
+	function handleInput({ detail }) {
+		const direction = detail;
+		let tempPos: Position = { ...playerPos };
+		if (modalVisible) return;
+
+		switch (direction) {
+			case "UP":
+				tempPos.y--;
+				break;
+
+			case "DOWN":
+				tempPos.y++;
+				break;
+
+			case "LEFT":
+				tempPos.x--;
+				break;
+
+			case "RIGHT":
+				tempPos.x++;
+				break;
+
+			default:
+				console.log("No direction recognised");
+		}
+
+		movePlayer(tempPos);
+	}
 
 	function modalCallback() {
 		if (gameState === "GAME OVER" || gameState === "VICTORY") {
@@ -47,29 +87,6 @@ const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
 		setGameState("PLAYING");
 	}
 
-	function handleKeyPress(event: React.KeyboardEvent<HTMLDivElement>) {
-		let tempPos: Position = { ...playerPos };
-		if (modalVisible) return;
-
-		if (event.code === "ArrowUp" || event.code === "w") {
-			tempPos.y--;
-		}
-
-		if (event.code === "ArrowDown" || event.code === "s") {
-			tempPos.y++;
-		}
-
-		if (event.code === "ArrowLeft" || event.code === "a") {
-			tempPos.x--;
-		}
-
-		if (event.code === "ArrowRight" || event.code === "d") {
-			tempPos.x++;
-		}
-
-		movePlayer(tempPos);
-	}
-
 	//this could / should be a useEffect ?
 	function movePlayer({ x, y }: Position) {
 		//visit the previous cell (just in case)
@@ -86,7 +103,6 @@ const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
 
 		//check wumpus / well
 		visitCell({ x, y });
-		console.log(checkCell({ x, y }).states);
 		if (
 			checkCell({ x, y }).states.WUMPUS === true ||
 			checkCell({ x, y }).states.WELL === true
@@ -111,12 +127,7 @@ const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
 	} as React.CSSProperties;
 
 	return (
-		<div
-			className={`board ${className}`}
-			style={dinamicBoardStyes}
-			onKeyDown={handleKeyPress}
-			tabIndex={0}
-		>
+		<div className={`board ${className}`} style={dinamicBoardStyes}>
 			<Player position={playerPos} hasGold={hasGold}></Player>
 			{board.map((row) => {
 				return row.map(({ states, visited, position }: CellType) => {
