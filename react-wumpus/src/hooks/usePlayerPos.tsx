@@ -15,5 +15,9 @@ export default function usePlayerPos(startingPos: Position, limit: number) {
 		}
 	}
 
+	useEffect(() => {
+		setPlayerPos(startingPos);
+	}, [limit]);
+
 	return { playerPos, updatePlayerPos };
 }

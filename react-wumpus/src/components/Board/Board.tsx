@@ -3,98 +3,124 @@ import "./board.scss";
 import Player from "../player/player";
 import { type Position, type CellType } from "../../types";
 import Cell from "./Cell";
-import { useBoard } from "../../hooks/useBoard";
+import { comparePosition, useBoard } from "../../hooks/useBoard";
 import Modal from "../modal/Modal";
 import { PlayerPosContext } from "../../contexts/positionContext";
+import { useGameState } from "../../hooks/useGameState";
+import { useInput } from "../../hooks/useInput";
+import type { playerInputEvent } from "../../hooks/useInput";
 
 interface Props {
 	size: number;
+	className?: string;
 }
 
-const Board: React.FC<Props> = ({ size = 10 }) => {
-	const [gameOver, setGameOver] = useState(false);
+type GameState = "VICTORY" | "GAME OVER" | "PLAYING";
+
+const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
 	const { board, visitCell, checkCell, resetBoard } = useBoard(size);
 	const [errorMsg, setErrorMsg] = useState<string>("");
 	const [modalVisible, setModalVisible] = useState<boolean>(false);
 	const { playerPos, updatePlayerPos } = useContext(PlayerPosContext);
 	const [hasGold, setHasGold] = useState(false);
-
-	function modalCallback() {
-		console.log(gameOver);
-		if (gameOver) {
+	const { gameState, setGameState } = useGameState("PLAYING", onStateChange);
+	const { playerInputEvent } = useInput();
+	const modalCallback = useCallback(() => {
+		console.log(gameState);
+		if (gameState === "GAME OVER" || gameState === "VICTORY") {
+			console.log("cleanup");
 			gameCleanup();
-			setGameOver(false);
 		}
 		setModalVisible(false);
-	}
+	}, [gameState]);
 
 	useEffect(() => {
-		if (gameOver) {
-			//modal
+		document.addEventListener(playerInputEvent.current.type, handleInput);
+
+		return () => {
+			document.removeEventListener(playerInputEvent.current.type, handleInput);
+		};
+	}, [playerInputEvent, board, modalVisible]);
+
+	// useEffect(() => {});
+
+	function handleInput({ detail }: playerInputEvent) {
+		const direction = detail;
+		let tempPos: Position = { ...playerPos };
+
+		if (modalVisible) return;
+
+		switch (direction) {
+			case "UP":
+				tempPos.y--;
+				break;
+
+			case "DOWN":
+				tempPos.y++;
+				break;
+
+			case "LEFT":
+				tempPos.x--;
+				break;
+
+			case "RIGHT":
+				tempPos.x++;
+				break;
+		}
+
+		if (!comparePosition(tempPos, playerPos)) movePlayer(tempPos);
+	}
+
+	function onStateChange(state: GameState) {
+		if (state === "GAME OVER") {
 			setModalVisible(true);
 			setErrorMsg("Game over");
-			//cleanup
-
-			//setGameOver(false)
+		} else if (state === "VICTORY") {
+			setModalVisible(true);
+			setErrorMsg("VICTORY !!!");
 		}
-	}, [gameOver]);
+	}
 
 	function gameCleanup() {
 		resetBoard();
 		updatePlayerPos({ x: 1, y: 1 });
 		setHasGold(false);
+		setGameState("PLAYING");
 	}
 
-	function handleKeyPress(event: React.KeyboardEvent<HTMLDivElement>) {
-		let tempPos: Position = { ...playerPos };
-		if (modalVisible) return;
-
-		if (event.code === "ArrowUp" || event.code === "w") {
-			tempPos.y--;
-		}
-
-		if (event.code === "ArrowDown" || event.code === "s") {
-			tempPos.y++;
-		}
-
-		if (event.code === "ArrowLeft" || event.code === "a") {
-			tempPos.x--;
-		}
-
-		if (event.code === "ArrowRight" || event.code === "d") {
-			tempPos.x++;
-		}
-
-		movePlayer(tempPos);
-	}
-
-	//se multiplican los indices por el tamaño de celda => posicion
+	//this could / should be a useEffect ?
 	function movePlayer({ x, y }: Position) {
 		//visit the previous cell (just in case)
+		let playerHasGold: boolean = hasGold;
+		console.log(x, y);
 		visitCell(playerPos);
 
 		let err = updatePlayerPos({ x, y });
 		if (err === -1) {
 			setModalVisible(true);
 			setErrorMsg("The player is out of bounds");
-
+			console.log(playerPos);
 			return;
 		}
 
 		//check wumpus / well
 		visitCell({ x, y });
-		console.log(checkCell({ x, y }).states);
 		if (
 			checkCell({ x, y }).states.WUMPUS === true ||
 			checkCell({ x, y }).states.WELL === true
 		) {
-			setGameOver(true);
+			setGameState("GAME OVER");
 			return;
 		}
 
-		if (checkCell({ x, y }).states.GOLD) setHasGold(true);
+		if (checkCell({ x, y }).states.GOLD) {
+			playerHasGold = true;
+			setHasGold(playerHasGold);
+		}
 
-		//uncover next cell
+		if (playerHasGold && checkCell({ x, y }).states.START) {
+			setGameState("VICTORY");
+		}
 	}
 
 	const dinamicBoardStyes = {
@@ -103,12 +129,7 @@ const Board: React.FC<Props> = ({ size = 10 }) => {
 	} as React.CSSProperties;
 
 	return (
-		<div
-			className="board"
-			style={dinamicBoardStyes}
-			onKeyDown={handleKeyPress}
-			tabIndex={0}
-		>
+		<div className={`board ${className}`} style={dinamicBoardStyes}>
 			<Player position={playerPos} hasGold={hasGold}></Player>
 			{board.map((row) => {
 				return row.map(({ states, visited, position }: CellType) => {
@@ -128,6 +149,8 @@ const Board: React.FC<Props> = ({ size = 10 }) => {
 				<h2>
 					Player pos x: {playerPos.x} y: {playerPos.y}
 				</h2>
+
+				<h2>Modal visible: {modalVisible ? "true" : "false"}</h2>
 			</footer>
 
 			<Modal visible={modalVisible} onModalClose={modalCallback}>

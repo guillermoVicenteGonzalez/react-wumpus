@@ -1,3 +1,4 @@
+@import "./styles/abstracts/colorVars.scss";
 @import "./styles/base/base.scss";
 
 .app-container {

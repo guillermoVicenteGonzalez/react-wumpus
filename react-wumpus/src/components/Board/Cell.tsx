@@ -7,26 +7,26 @@ const Cell: React.FC<CellType> = ({ position, visited, states }) => {
 		let colors: string[] = [];
 
 		if (states.BREEZE == true) {
-			colors.push("aliceblue");
+			colors.push("var(--breeze-color)");
 		}
 
 		if (states.STENCH == true) {
-			colors.push("greenyellow");
+			colors.push("var(--stench-color)");
 		}
 
 		if (states.GOLD == true) {
-			colors = ["gold"];
+			colors = ["var(--gold-color)"];
 		}
 
 		if (states.WUMPUS == true) {
-			colors = ["green"];
+			colors = ["var(--wumpus-color)"];
 		}
 
 		if (states.WELL == true) {
-			colors = ["black"];
+			colors = ["var(--well-color)"];
 		}
 		if (states.START) {
-			colors = ["purple"];
+			colors = ["var(--start-color)"];
 		}
 
 		if (colors.length > 1) {

@@ -23,17 +23,17 @@ function randomPosition(min: number, max: number) {
 	} as Position;
 }
 
-function comparePosition(pos1: Position, pos2: Position) {
+export function comparePosition(pos1: Position, pos2: Position) {
 	if (pos1.x === pos2.x && pos1.y === pos2.y) return true;
 	return false;
 }
 
 function createObstacles(board: Array<CellType[]>, size: number) {
 	const startingPos: Position = { x: 0, y: 0 };
-	let nWells = size / 4 - 1;
+	let nWells = size / 4;
 
 	let min = 0;
-	let max = 9;
+	let max = size - 1;
 
 	let obstacles: Position[] = [];
 	obstacles.push(startingPos);
@@ -89,7 +89,7 @@ function createBoard(s: number) {
 		board.push(nestedBoard);
 	}
 
-	return createObstacles(board, s);
+	return createObstacles(board, board.length);
 }
 
 export function useBoard(size: number = 10) {
@@ -113,7 +113,7 @@ export function useBoard(size: number = 10) {
 	useEffect(() => {
 		let nBoard = createBoard(size);
 		setBoard(nBoard);
-	}, []);
+	}, [size]);
 
 	useEffect(() => {
 		//resize board?
