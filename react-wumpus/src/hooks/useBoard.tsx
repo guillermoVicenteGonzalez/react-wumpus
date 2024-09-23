@@ -23,7 +23,7 @@ function randomPosition(min: number, max: number) {
 	} as Position;
 }
 
-function comparePosition(pos1: Position, pos2: Position) {
+export function comparePosition(pos1: Position, pos2: Position) {
 	if (pos1.x === pos2.x && pos1.y === pos2.y) return true;
 	return false;
 }

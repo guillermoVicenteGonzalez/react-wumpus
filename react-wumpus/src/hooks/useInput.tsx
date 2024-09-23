@@ -1,5 +1,9 @@
 import { useState, useEffect, KeyboardEvent, useRef } from "react";
 
+export interface playerInputEvent extends CustomEvent {
+	detail: Inputs;
+}
+
 export type Inputs =
 	| "UP"
 	| "DOWN"
@@ -11,13 +15,13 @@ export type Inputs =
 
 export const useInput = () => {
 	const [input, setInput] = useState<Inputs>(null);
-	const playerInputEvent = useRef(
+	const playerInputEvent = useRef<CustomEvent>(
 		new CustomEvent("playerInput", {
 			detail: input,
 		})
 	);
 
-	function handleKeyDown(event: KeyboardEvent) {
+	function handleKeyDown(event: KeyboardEvent<unknown>) {
 		let flag = true;
 		switch (event.key) {
 			case "w":

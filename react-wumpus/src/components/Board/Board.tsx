@@ -3,12 +3,12 @@ import "./board.scss";
 import Player from "../player/player";
 import { type Position, type CellType } from "../../types";
 import Cell from "./Cell";
-import { useBoard } from "../../hooks/useBoard";
+import { comparePosition, useBoard } from "../../hooks/useBoard";
 import Modal from "../modal/Modal";
 import { PlayerPosContext } from "../../contexts/positionContext";
 import { useGameState } from "../../hooks/useGameState";
 import { useInput } from "../../hooks/useInput";
-import type { Inputs } from "../../hooks/useInput";
+import type { playerInputEvent } from "../../hooks/useInput";
 
 interface Props {
 	size: number;
@@ -24,7 +24,15 @@ const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
 	const { playerPos, updatePlayerPos } = useContext(PlayerPosContext);
 	const [hasGold, setHasGold] = useState(false);
 	const { gameState, setGameState } = useGameState("PLAYING", onStateChange);
-	const { input, playerInputEvent } = useInput();
+	const { playerInputEvent } = useInput();
+	const modalCallback = useCallback(() => {
+		console.log(gameState);
+		if (gameState === "GAME OVER" || gameState === "VICTORY") {
+			console.log("cleanup");
+			gameCleanup();
+		}
+		setModalVisible(false);
+	}, [gameState]);
 
 	useEffect(() => {
 		document.addEventListener(playerInputEvent.current.type, handleInput);
@@ -32,11 +40,14 @@ const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
 		return () => {
 			document.removeEventListener(playerInputEvent.current.type, handleInput);
 		};
-	}, [playerInputEvent, board]);
+	}, [playerInputEvent, board, modalVisible]);
 
-	function handleInput({ detail }) {
+	// useEffect(() => {});
+
+	function handleInput({ detail }: playerInputEvent) {
 		const direction = detail;
 		let tempPos: Position = { ...playerPos };
+
 		if (modalVisible) return;
 
 		switch (direction) {
@@ -55,19 +66,9 @@ const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
 			case "RIGHT":
 				tempPos.x++;
 				break;
-
-			default:
-				console.log("No direction recognised");
 		}
 
-		movePlayer(tempPos);
-	}
-
-	function modalCallback() {
-		if (gameState === "GAME OVER" || gameState === "VICTORY") {
-			gameCleanup();
-		}
-		setModalVisible(false);
+		if (!comparePosition(tempPos, playerPos)) movePlayer(tempPos);
 	}
 
 	function onStateChange(state: GameState) {
@@ -91,13 +92,14 @@ const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
 	function movePlayer({ x, y }: Position) {
 		//visit the previous cell (just in case)
 		let playerHasGold: boolean = hasGold;
+		console.log(x, y);
 		visitCell(playerPos);
 
 		let err = updatePlayerPos({ x, y });
 		if (err === -1) {
 			setModalVisible(true);
 			setErrorMsg("The player is out of bounds");
-
+			console.log(playerPos);
 			return;
 		}
 
@@ -147,6 +149,8 @@ const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
 				<h2>
 					Player pos x: {playerPos.x} y: {playerPos.y}
 				</h2>
+
+				<h2>Modal visible: {modalVisible ? "true" : "false"}</h2>
 			</footer>
 
 			<Modal visible={modalVisible} onModalClose={modalCallback}>
