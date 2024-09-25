@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { type CELL_STATES, Position, type CellType } from "../types";
+import { Position, type CellType } from "../types";
 
 //returns an array of cells surrounding an obstacle (they have a field position) with their appropiate states set
 function surroundCells(pos: Position, limit: number) {

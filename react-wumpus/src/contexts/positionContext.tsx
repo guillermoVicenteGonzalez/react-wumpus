@@ -1,8 +1,6 @@
 import type { Position } from "../types";
-import { createContext, useState } from "react";
+import { createContext } from "react";
 import usePlayerPos from "../hooks/usePlayerPos";
-
-const startingPos: Position = { x: 1, y: 1 };
 
 interface PlayerPosProviderValue {
 	playerPos: Position;

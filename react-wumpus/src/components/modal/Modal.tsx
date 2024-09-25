@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { type playerInputEvent, useInput } from "../../hooks/useInput";
+import { useInput } from "../../hooks/useInput";
 import "./modal.scss";
 
 interface Props {
@@ -23,7 +23,8 @@ const Modal: React.FC<Props> = ({ visible, children, onModalClose }) => {
 		};
 	}, [onModalClose]);
 
-	function handleCancelKey({ detail }: playerInputEvent) {
+	function handleCancelKey({ detail }: any) {
+		// function handleCancelKey({ detail }: playerInputEvent) {
 		if (detail == "CANCEL" || detail == "ACCEPT") {
 			onModalClose();
 		}

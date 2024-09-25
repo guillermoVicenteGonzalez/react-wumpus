@@ -1,4 +1,4 @@
-import { useState, useEffect, KeyboardEvent, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export interface playerInputEvent extends CustomEvent {
 	detail: Inputs;
@@ -21,7 +21,8 @@ export const useInput = () => {
 		})
 	);
 
-	function handleKeyDown(event: KeyboardEvent<unknown>) {
+	function handleKeyDown(event: any) {
+		// function handleKeyDown(event: KeyboardEvent) {
 		let flag = true;
 		switch (event.key) {
 			case "w":
