@@ -8,7 +8,6 @@ import Modal from "../modal/Modal";
 import { PlayerPosContext } from "../../contexts/positionContext";
 import { useGameState } from "../../hooks/useGameState";
 import { useInput } from "../../hooks/useInput";
-import type { playerInputEvent } from "../../hooks/useInput";
 
 interface Props {
 	size: number;
@@ -42,9 +41,10 @@ const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
 		};
 	}, [playerInputEvent, board, modalVisible]);
 
-	// useEffect(() => {});
+	//cambiar
 
-	function handleInput({ detail }: playerInputEvent) {
+	function handleInput({ detail }: any) {
+		// function handleInput({ detail }: playerInputEvent) {
 		const direction = detail;
 		let tempPos: Position = { ...playerPos };
 

@@ -1,7 +1,7 @@
-import { type Position, type CellType, CellStates } from "../../types";
+import { type CellType } from "../../types";
 import "./cell.scss";
 
-const Cell: React.FC<CellType> = ({ position, visited, states }) => {
+const Cell: React.FC<CellType> = ({ visited, states }) => {
 	const cellState = visited ? "cell--visited" : "";
 	function cellColor() {
 		let colors: string[] = [];
