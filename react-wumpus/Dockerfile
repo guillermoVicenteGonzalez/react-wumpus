@@ -1,5 +1,5 @@
 
-FROM node:21-bookworm-slim
+FROM node:20-bookworm-slim as dev
 
 WORKDIR /app
 
@@ -9,13 +9,9 @@ RUN npm i
 
 COPY . .
 
-RUN npm run build
+EXPOSE 5173
 
-# RUN npm install -g serve
+CMD ["npm","run","dev"]
 
-ENV PORT=4173
-
-EXPOSE 4173
-
-# CMD [ "serve", "-s", "dist" ]
-CMD ["npm","run","preview"]
+FROM node:20-bookworm-slim as prod
+CMD echo "Hello"

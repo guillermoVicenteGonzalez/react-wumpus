@@ -1,8 +1,31 @@
+name: react-wumpus
+
 services:
+  front-dev:
+    build:
+      context: .
+      target: dev
+    develop:
+      target: dev
+      watch:
+        - path: ./src
+          target: /app/src
+          action: sync
+    ports:
+      - 5173:5173
+      - 4173:4173
+    profiles: [dev]
+
   server:
     build:
       context: .
-    environment:
-      NODE_ENV: production
+    develop:
+      target: dev
+      watch:
+        - action: sync
+          path: ./src
+          target: /app/src
     ports:
+      - 5173:5173
       - 4173:4173
+    profiles: [build]
