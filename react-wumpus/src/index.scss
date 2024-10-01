@@ -1,0 +1,17 @@
+@import "./styles/abstracts/colorVars.scss";
+@import "./styles/abstracts/mixins.scss";
+
+@import "./styles/base/base.scss";
+
+@import "./components/Board/board.scss";
+@import "./components/Board/cell.scss";
+@import "./components/dashboard/Dashboard.scss";
+@import "./components/modal/modal.scss";
+@import "./components/player/player.scss";
+
+.app-container {
+	max-width: 100vw;
+	max-height: 100vh;
+
+	overflow: hidden;
+}

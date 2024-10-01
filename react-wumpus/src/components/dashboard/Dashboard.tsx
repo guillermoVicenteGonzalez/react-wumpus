@@ -1,4 +1,3 @@
-import "./Dashboard.scss";
 import Cell from "../Board/Cell";
 import { useState } from "react";
 

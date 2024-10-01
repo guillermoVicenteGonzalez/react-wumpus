@@ -2,6 +2,10 @@
 	--cell-size: 5rem;
 	--board-size: 10;
 
+	@include respond(tab-port) {
+		--cell-size: 4rem;
+	}
+
 	position: relative;
 	display: grid;
 	grid-template-columns: repeat(var(--board-size), var(--cell-size));

@@ -1,4 +1,3 @@
-import "./player.scss";
 import { type Position } from "../../types";
 
 interface Props {

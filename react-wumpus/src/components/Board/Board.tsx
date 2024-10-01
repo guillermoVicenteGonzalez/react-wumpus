@@ -1,5 +1,4 @@
 import { useCallback, useContext, useEffect, useState } from "react";
-import "./board.scss";
 import Player from "../player/player";
 import { type Position, type CellType } from "../../types";
 import Cell from "./Cell";
