@@ -1,31 +1,24 @@
 import { useState } from "react";
 import type { Position } from "./types";
-import "./App.css";
+import "./App.scss";
 import Board from "./components/Board/Board";
 import { PlayerPosContextProvider } from "./contexts/positionContext";
+import DashBoard from "./components/dashboard/Dashboard";
 
 const startingPos: Position = { x: 1, y: 1 };
 
 function App() {
 	const [boardSize, setBoardSize] = useState(10);
 
-	function handleResize(event: React.ChangeEvent<HTMLInputElement>) {
-		let nSize = Number(event.target.value);
+	function handleResize(nSize: number) {
 		setBoardSize(nSize);
 	}
 
 	return (
 		<PlayerPosContextProvider size={boardSize} startingPos={startingPos}>
-			<div className="app-container">
+			<div className="app-container layout">
+				<DashBoard size={boardSize} onSizeChange={handleResize}></DashBoard>
 				<Board size={boardSize}></Board>
-				<input
-					max={20}
-					min={0}
-					type="range"
-					value={boardSize}
-					onChange={handleResize}
-				></input>
-				<span>{boardSize}</span>
 			</div>
 		</PlayerPosContextProvider>
 	);

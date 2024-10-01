@@ -5,6 +5,8 @@ $well-color: black;
 $player-color: red;
 $start-color: purple;
 $gold-color: gold;
+$hidden-color: blue;
+$default-color: brown;
 
 :root {
 	--wumpus-color: #{$wumpus-color};
@@ -14,4 +16,6 @@ $gold-color: gold;
 	--player-color: #{$player-color};
 	--start-color: #{$start-color};
 	--gold-color: #{$gold-color};
+	--hidden-color: #{$hidden-color};
+	--default-color: #{$default-color};
 }

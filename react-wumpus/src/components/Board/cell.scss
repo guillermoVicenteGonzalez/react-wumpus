@@ -1,19 +1,23 @@
-$hidden-color: blue;
-$wumpus-color: green;
-$well-color: aliceblue;
-$default-color: brown;
+@import "../../styles/abstracts/colorVars.scss";
 
 .cell {
 	position: relative;
 	min-width: var(--cell-size);
 	min-height: var(--cell-size);
+
+	max-width: var(--cell-size);
+	max-height: var(--cell-size);
+
 	background-color: $default-color;
+
+	border-radius: 10px;
+	overflow: hidden;
 
 	&::before {
 		position: absolute;
 		display: block;
 		content: " ";
-		background-color: blue;
+		background-color: $hidden-color;
 		width: 100%;
 		height: 100%;
 	}

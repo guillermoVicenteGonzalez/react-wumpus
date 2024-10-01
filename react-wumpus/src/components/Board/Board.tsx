@@ -144,15 +144,6 @@ const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
 				});
 			})}
 
-			<footer>
-				<h1>Debug</h1>
-				<h2>
-					Player pos x: {playerPos.x} y: {playerPos.y}
-				</h2>
-
-				<h2>Modal visible: {modalVisible ? "true" : "false"}</h2>
-			</footer>
-
 			<Modal visible={modalVisible} onModalClose={modalCallback}>
 				<h1>{errorMsg}</h1>
 			</Modal>
