@@ -1,10 +1,11 @@
 $btn-dimensions: 5rem;
+$btn-color: rgb(177, 177, 177);
 
 .mobile-ctrl {
 	// width: 50%;
 	position: absolute;
 	top: 50%;
-	left: 80%;
+	left: 85%;
 	transform: translate(-50%, -50%);
 
 	display: grid;
@@ -22,10 +23,23 @@ $btn-dimensions: 5rem;
 		align-items: center;
 
 		font-weight: 900;
-		font-size: 3rem;
-		border-radius: 100%;
+		font-size: 2.5rem;
+		border-radius: 20px;
 		width: $btn-dimensions;
 		height: $btn-dimensions;
+
+		border: none;
+		background-color: rgba($btn-color, 0.5);
+		cursor: pointer;
+
+		&:hover {
+			background-color: rgba($btn-color, 0.6);
+		}
+
+		&:active {
+			background-color: rgba($btn-color, 0.7);
+			transform: scale(1.2);
+		}
 
 		&--left {
 			grid-row: 2/3;
