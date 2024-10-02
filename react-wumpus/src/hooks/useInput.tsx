@@ -21,62 +21,54 @@ export const useInput = () => {
 		})
 	);
 
+	//for mobile ctrl
+	//probably redundant and not really elegant
+	function sendInput(input: Inputs) {
+		setInput(input);
+		playerInputEvent.current = new CustomEvent("playerInput", {
+			detail: input,
+		});
+		document.dispatchEvent(playerInputEvent.current);
+	}
+
 	function handleKeyDown(event: any) {
 		// function handleKeyDown(event: KeyboardEvent) {
-		let flag = true;
+		// let flag = true;
 		switch (event.key) {
 			case "w":
 			case "ArrowUp":
-				setInput("UP");
-				playerInputEvent.current = new CustomEvent("playerInput", {
-					detail: "UP",
-				});
+				sendInput("UP");
 				break;
 
 			case "s":
 			case "ArrowDown":
-				setInput("DOWN");
-				playerInputEvent.current = new CustomEvent("playerInput", {
-					detail: "DOWN",
-				});
+				sendInput("DOWN");
 				break;
 
 			case "a":
 			case "ArrowLeft":
-				setInput("LEFT");
-				playerInputEvent.current = new CustomEvent("playerInput", {
-					detail: "LEFT",
-				});
+				sendInput("LEFT");
 				break;
 
 			case "d":
 			case "ArrowRight":
-				setInput("RIGHT");
-				playerInputEvent.current = new CustomEvent("playerInput", {
-					detail: "RIGHT",
-				});
+				sendInput("RIGHT");
 				break;
 
 			case "Enter":
-				setInput("ACCEPT");
-				playerInputEvent.current = new CustomEvent("playerInput", {
-					detail: "ACCEPT",
-				});
+				sendInput("ACCEPT");
 				break;
 
 			case "Escape":
-				setInput("CANCEL");
-				playerInputEvent.current = new CustomEvent("playerInput", {
-					detail: "CANCEL",
-				});
+				sendInput("CANCEL");
 				break;
 
 			default:
-				//not an "approved action => no flag"
-				flag = false;
+			//not an "approved action => no flag"
+			// flag = false;
 		}
 
-		if (flag) document.dispatchEvent(playerInputEvent.current);
+		// if (flag) document.dispatchEvent(playerInputEvent.current);
 	}
 
 	useEffect(() => {
@@ -87,5 +79,5 @@ export const useInput = () => {
 		};
 	}, []);
 
-	return { input, playerInputEvent };
+	return { input, playerInputEvent, sendInput };
 };
