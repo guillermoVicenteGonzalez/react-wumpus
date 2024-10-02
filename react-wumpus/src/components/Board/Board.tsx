@@ -123,7 +123,6 @@ const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
 	}
 
 	const dinamicBoardStyes = {
-		"--cell-size": "5rem",
 		"--board-size": size,
 	} as React.CSSProperties;
 
