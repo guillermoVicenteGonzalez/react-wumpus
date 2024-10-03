@@ -1,0 +1,19 @@
+.layout {
+	// display: grid;
+	// grid-template-columns: 2fr 4fr;
+	// grid-template-rows: 100vh;
+
+	display: flex;
+	// justify-content: center;
+	// align-items: center;
+
+	width: 100vw;
+	height: 100vh;
+
+	max-height: 100vh;
+	overflow: hidden;
+
+	@include respond(tab-port) {
+		flex-direction: column;
+	}
+}

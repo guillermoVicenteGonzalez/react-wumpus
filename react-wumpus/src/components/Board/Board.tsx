@@ -1,5 +1,4 @@
 import { useCallback, useContext, useEffect, useState } from "react";
-import "./board.scss";
 import Player from "../player/player";
 import { type Position, type CellType } from "../../types";
 import Cell from "./Cell";
@@ -124,7 +123,6 @@ const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
 	}
 
 	const dinamicBoardStyes = {
-		"--cell-size": "5rem",
 		"--board-size": size,
 	} as React.CSSProperties;
 
@@ -143,15 +141,6 @@ const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
 					);
 				});
 			})}
-
-			<footer>
-				<h1>Debug</h1>
-				<h2>
-					Player pos x: {playerPos.x} y: {playerPos.y}
-				</h2>
-
-				<h2>Modal visible: {modalVisible ? "true" : "false"}</h2>
-			</footer>
 
 			<Modal visible={modalVisible} onModalClose={modalCallback}>
 				<h1>{errorMsg}</h1>

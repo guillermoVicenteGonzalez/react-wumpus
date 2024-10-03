@@ -1,5 +1,4 @@
 import { type CellType } from "../../types";
-import "./cell.scss";
 
 const Cell: React.FC<CellType> = ({ visited, states }) => {
 	const cellState = visited ? "cell--visited" : "";
