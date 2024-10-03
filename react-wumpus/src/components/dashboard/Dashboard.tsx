@@ -118,8 +118,6 @@ const DashBoard: React.FC<DashBoardProps> = ({ size, onSizeChange }) => {
 				></input>
 				<span>size: {size}</span>
 			</div>
-
-			<Test></Test>
 		</div>
 	);
 };

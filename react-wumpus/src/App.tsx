@@ -10,7 +10,6 @@ const startingPos: Position = { x: 1, y: 1 };
 
 function App() {
 	const [boardSize, setBoardSize] = useState(10);
-
 	function handleResize(nSize: number) {
 		setBoardSize(nSize);
 	}
