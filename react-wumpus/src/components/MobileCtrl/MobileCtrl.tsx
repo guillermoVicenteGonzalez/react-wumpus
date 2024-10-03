@@ -1,9 +1,16 @@
 import { useInput } from "../../hooks/useInput";
+import useIsMobile from "../../hooks/useIsMobile";
 
 interface MobileCtrlProps {}
 
 const MobileCtrl: React.FC<MobileCtrlProps> = () => {
 	const { sendInput } = useInput();
+	const isMobile = useIsMobile();
+
+	if (!isMobile) {
+		return;
+	}
+
 	return (
 		<div className="mobile-ctrl">
 			<button

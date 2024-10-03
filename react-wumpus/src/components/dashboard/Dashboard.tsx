@@ -1,5 +1,6 @@
 import Cell from "../Board/Cell";
 import { useState } from "react";
+import Test from "../Test/Test";
 
 interface DashBoardProps {
 	size: number;
@@ -117,6 +118,8 @@ const DashBoard: React.FC<DashBoardProps> = ({ size, onSizeChange }) => {
 				></input>
 				<span>size: {size}</span>
 			</div>
+
+			<Test></Test>
 		</div>
 	);
 };

@@ -12,7 +12,7 @@ $animation-time: 0.4s;
 	position: relative;
 	transition: max-width $animation-time;
 	background-color: #fff;
-	z-index: 1;
+	z-index: 3;
 
 	box-shadow: 0 0 2rem 0.2rem rgba(black, 0.2);
 
@@ -23,6 +23,7 @@ $animation-time: 0.4s;
 		width: 100vw;
 		max-height: 80vh;
 		transition: max-height $animation-time;
+		padding: 3rem 5rem;
 	}
 
 	&--closed {

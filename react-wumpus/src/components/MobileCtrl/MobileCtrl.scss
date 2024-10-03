@@ -29,15 +29,15 @@ $btn-color: rgb(177, 177, 177);
 		height: $btn-dimensions;
 
 		border: none;
-		background-color: rgba($btn-color, 0.5);
+		background-color: rgba($btn-color, 0.8);
 		cursor: pointer;
 
 		&:hover {
-			background-color: rgba($btn-color, 0.6);
+			background-color: rgba($btn-color, 0.9);
 		}
 
 		&:active {
-			background-color: rgba($btn-color, 0.7);
+			background-color: rgba($btn-color, 1);
 			transform: scale(1.2);
 		}
 

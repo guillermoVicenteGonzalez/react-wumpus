@@ -10,7 +10,7 @@
 	// background-color: red;
 	// background-color: $player-color;
 	background-color: var(--player-color);
-	z-index: 99;
+	z-index: 2;
 
 	// transform: translate(var(--player-pos-x), var(--player-pos-y));
 	grid-row: var(--player-pos-y) / calc(1 + var(--player-pos-y));
