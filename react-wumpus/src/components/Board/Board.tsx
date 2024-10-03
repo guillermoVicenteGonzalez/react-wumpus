@@ -24,9 +24,7 @@ const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
 	const { gameState, setGameState } = useGameState("PLAYING", onStateChange);
 	const { playerInputEvent } = useInput();
 	const modalCallback = useCallback(() => {
-		console.log(gameState);
 		if (gameState === "GAME OVER" || gameState === "VICTORY") {
-			console.log("cleanup");
 			gameCleanup();
 		}
 		setModalVisible(false);
@@ -91,14 +89,12 @@ const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
 	function movePlayer({ x, y }: Position) {
 		//visit the previous cell (just in case)
 		let playerHasGold: boolean = hasGold;
-		console.log(x, y);
 		visitCell(playerPos);
 
 		let err = updatePlayerPos({ x, y });
 		if (err === -1) {
 			setModalVisible(true);
 			setErrorMsg("The player is out of bounds");
-			console.log(playerPos);
 			return;
 		}
 
