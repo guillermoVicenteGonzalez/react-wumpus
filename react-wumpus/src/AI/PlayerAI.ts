@@ -1,94 +1,136 @@
+/*
+// Planteamiento inverso: Todas aparecen como unexplored + insecure.
+Explorar una casilla y ver que no es insecure implica hacer safe las que hay alrededor.
+Una casilla safe siempre es safe, no se cambia nunca.
+Encontrarse stench / breeze => marcar como danger las adyacentes QUE NO SEAN SAFE.
+Encontrarse STENCH  => implica tambien marcar esa casilla como safe.
+Hay que almacenar las RUTAS ya visitadas? para evitar loops.
+*/
+
 import { CellType, Position } from "../types";
 
 type internalCell = {
 	explored: boolean;
-	state: "dangerous" | "insecure" | "secure";
+	state?: "dangerous" | "insecure" | "secure";
 };
 
-let board: CellType[][];
-let internalBoard: internalCell[][];
-let size: number;
+// let board: CellType[][];
+// let internalBoard: internalCell[][];
+// let size: number;
 
-function getNeighbours(pos: Position, size: number) {
-	let cells: Position[] = [];
+export default class AIPlayer {
+	#board: CellType[][];
+	#internalBoard: internalCell[][];
+	#size: number;
 
-	for (let i = -1; i <= 2; i += 2) {
-		for (const key in pos) {
-			let auxPos = { ...pos };
-			auxPos[key as keyof Position] += i;
-			if (
-				auxPos[key as keyof Position] < size &&
-				auxPos[key as keyof Position] >= 0
-			) {
-				cells.push(auxPos);
+	constructor(size: number, board: CellType[][]) {
+		this.#size = size;
+		this.#board = board;
+		this.#internalBoard = new Array(size).fill(
+			new Array(size).fill({ explored: false })
+		);
+	}
+
+	setBoard(nBoard: CellType[][]) {
+		this.#board = nBoard;
+	}
+
+	resetInternalBoard() {
+		this.#internalBoard = new Array(this.#size).fill(
+			new Array(this.#size).fill({ explored: false })
+		);
+	}
+
+	setSize(nSize: number) {
+		this.#size = nSize;
+		this.resetInternalBoard();
+	}
+
+	#getNeighbours(pos: Position, size: number) {
+		let cells: Position[] = [];
+
+		for (let i = -1; i <= 2; i += 2) {
+			for (const key in pos) {
+				let auxPos = { ...pos };
+				auxPos[key as keyof Position] += i;
+				if (
+					auxPos[key as keyof Position] < size &&
+					auxPos[key as keyof Position] >= 0
+				) {
+					cells.push(auxPos);
+				}
 			}
 		}
+
+		return cells;
 	}
 
-	return cells;
-}
+	#checkSafeCell(cell: CellType) {
+		if (
+			!cell.states.BREEZE &&
+			!cell.states.WUMPUS &&
+			!cell.states.STENCH &&
+			!cell.states.WELL
+		) {
+			return false;
+		}
 
-//heuristic really
-function orderNeighbours(
-	neighbours: Position[],
-	internalBoard: internalCell[][]
-) {
-	return neighbours
-		.sort((n1, n2) => {
-			if (internalBoard[n1.x][n1.y].state == "secure") return 1;
-			if (internalBoard[n1.x][n1.y].state == "dangerous") return -1;
-			if (
-				internalBoard[n1.x][n1.y].state == "insecure" &&
-				internalBoard[n2.x][n2.y].state != "dangerous"
-			)
-				return -1;
-			return 0;
-		})
-		.sort((n1, n2) => {
-			if (
-				internalBoard[n1.x][n2.y].explored &&
-				!internalBoard[n1.x][n1.y].explored
-			)
-				return 1;
-			if (
-				!internalBoard[n1.x][n2.y].explored &&
-				internalBoard[n1.x][n1.y].explored
-			)
-				return -1;
-			return 0;
+		return true;
+	}
+
+	#orderNeighbours(neighbours: Position[], internalBoard: internalCell[][]) {
+		let localNeighbours = [...neighbours];
+
+		//primero filtro las posiciones seguras.
+		localNeighbours = localNeighbours.filter(({ x, y }) => {
+			return internalBoard[x][y].state != "insecure";
 		});
-}
 
-/*if we find  a insecure cell (stench / breeze) we check its surroundings (explored)
-if some of its surrounding cells are also insecure we can deduce if there is a dangerous cell*/
-function checkSurrounding({ x, y }: Position, board: internalCell[][]) {}
+		//luego ordeno en funcion de si están explorados o no.
+		localNeighbours = localNeighbours.sort((n1, _n2) => {
+			if (internalBoard[n1.x][n1.y].explored) return -1;
+			return 1;
+		});
 
-//if we find a
-function setInsecureCell() {}
-
-function explore(currentPos: Position) {
-	//exploro la casilla
-	internalBoard[currentPos.x][currentPos.y].explored = true;
-
-	//compruebo si es unsafe y en caso afirmativo lo anoto
-	if (
-		board[currentPos.x][currentPos.y].states.BREEZE ||
-		board[currentPos.x][currentPos.y].states.STENCH
-	) {
-		internalBoard[currentPos.x][currentPos.y].state = "insecure";
-		return;
+		return localNeighbours;
 	}
 
-	//ordeno los vecinos segun la heuristica y repito el proceso para cada uno de ellos
-	let neighbours = getNeighbours(currentPos, size);
-	neighbours = orderNeighbours(neighbours, internalBoard);
-	neighbours.forEach((n) => {
-		explore(n);
-	});
-	//verificamos si sabemos si es segura o insegura
-	//si es segura exploramos
-}
+	explore(currentPos: Position, _action?: () => void) {
+		//exploro la casilla
+		const { x, y } = currentPos;
+		this.#internalBoard[x][y].explored = true;
 
-export default () => {
-	// console.log(neighbours({ x: 5, y: 5 }, 10));
-};
+		//si encuentro el oro vuelvo.
+		if (this.#board[x][y].states.GOLD) return [currentPos];
+
+		//obtengo sus vecinos
+		let neighbours = this.#getNeighbours(currentPos, this.#size);
+
+		//si es una casilla segura => las que la rodean tambien (sus vecinos).
+		if (this.#checkSafeCell(this.#board[x][y])) {
+			neighbours.forEach((p) => {
+				if (!this.#internalBoard[p.x][p.y].explored)
+					this.#internalBoard[p.x][p.y].state = "secure";
+			});
+		} else {
+			neighbours.forEach((p) => {
+				//if the cell is unexplored
+				if (
+					!this.#internalBoard[p.x][p.y].explored &&
+					this.#internalBoard[p.x][p.y].state != "secure"
+				)
+					this.#internalBoard[p.x][p.y].state = "insecure";
+			});
+		}
+
+		//ahora ordenamos los vecinos siguiendo la heuristica
+		neighbours = this.#orderNeighbours(neighbours, this.#internalBoard);
+		//y los vamos visitando haciendo llamadas recursivas.
+		neighbours.forEach((p) => {
+			let res = this.explore(p);
+			if (res != null) {
+				return [currentPos, ...res];
+			}
+		});
+	}
+}

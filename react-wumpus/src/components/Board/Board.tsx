@@ -38,8 +38,6 @@ const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
 		};
 	}, [playerInputEvent, board, modalVisible]);
 
-	//cambiar
-
 	function handleInput({ detail }: any) {
 		// function handleInput({ detail }: playerInputEvent) {
 		const direction = detail;
