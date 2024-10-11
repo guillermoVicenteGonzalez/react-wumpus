@@ -7,6 +7,7 @@ import Modal from "../modal/Modal";
 import { PlayerPosContext } from "../../contexts/positionContext";
 import { useGameState } from "../../hooks/useGameState";
 import { useInput } from "../../hooks/useInput";
+import useAiPlayer from "../../hooks/useAIPlayer";
 
 interface Props {
 	size: number;
@@ -23,6 +24,8 @@ const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
 	const [hasGold, setHasGold] = useState(false);
 	const { gameState, setGameState } = useGameState("PLAYING", onStateChange);
 	const { playerInputEvent } = useInput();
+	const aiPlayer = useAiPlayer(size, board);
+
 	const modalCallback = useCallback(() => {
 		if (gameState === "GAME OVER" || gameState === "VICTORY") {
 			gameCleanup();
@@ -37,6 +40,12 @@ const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
 			document.removeEventListener(playerInputEvent.current.type, handleInput);
 		};
 	}, [playerInputEvent, board, modalVisible]);
+
+	useEffect(() => {
+		if (board.length != 0) {
+			aiPlayer.current.explore({ x: 0, y: 0 });
+		}
+	}, []);
 
 	function handleInput({ detail }: any) {
 		// function handleInput({ detail }: playerInputEvent) {

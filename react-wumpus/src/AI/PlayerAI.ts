@@ -26,9 +26,7 @@ export default class AIPlayer {
 	constructor(size: number, board: CellType[][]) {
 		this.#size = size;
 		this.#board = board;
-		this.#internalBoard = new Array(size).fill(
-			new Array(size).fill({ explored: false })
-		);
+		this.#internalBoard = this.#generateInternalBoard(this.#size);
 	}
 
 	setBoard(nBoard: CellType[][]) {
@@ -36,14 +34,31 @@ export default class AIPlayer {
 	}
 
 	resetInternalBoard() {
-		this.#internalBoard = new Array(this.#size).fill(
-			new Array(this.#size).fill({ explored: false })
-		);
+		this.#internalBoard = this.#generateInternalBoard(this.#size);
 	}
 
 	setSize(nSize: number) {
 		this.#size = nSize;
 		this.resetInternalBoard();
+	}
+
+	//this is done this way because array.fill() uses the same reference for every element
+	/**
+	 * 		this.#internalBoard = new Array(size).fill(
+			new Array(size).fill({ explored: false })
+		); 
+	 */
+	#generateInternalBoard(size: number) {
+		let arr: internalCell[][] = [];
+		for (let i = 0; i < size; i++) {
+			let auxArr: internalCell[] = [];
+			for (let j = 0; j < size; j++) {
+				auxArr.push({ explored: false });
+			}
+			arr.push(auxArr);
+		}
+
+		return arr;
 	}
 
 	#getNeighbours(pos: Position, size: number) {
@@ -81,14 +96,21 @@ export default class AIPlayer {
 	#orderNeighbours(neighbours: Position[], internalBoard: internalCell[][]) {
 		let localNeighbours = [...neighbours];
 
-		//primero filtro las posiciones seguras.
-		localNeighbours = localNeighbours.filter(({ x, y }) => {
-			return internalBoard[x][y].state != "insecure";
-		});
+		console.log(localNeighbours);
 
+		//primero filtro las posiciones seguras.
+		localNeighbours = localNeighbours
+			// .filter(({ x, y }) => {
+			// 	return internalBoard[x][y].state != "insecure";
+			// })
+			.filter(({ x, y }) => {
+				return internalBoard[x][y].explored == false;
+			});
+
+		console.log(localNeighbours);
 		//luego ordeno en funcion de si están explorados o no.
 		localNeighbours = localNeighbours.sort((n1, _n2) => {
-			if (internalBoard[n1.x][n1.y].explored) return -1;
+			if (internalBoard[n1.x][n1.y].state == "insecure") return -1;
 			return 1;
 		});
 
@@ -96,12 +118,21 @@ export default class AIPlayer {
 	}
 
 	explore(currentPos: Position, _action?: () => void) {
-		//exploro la casilla
+		// exploro la casilla
+		console.log("explore");
 		const { x, y } = currentPos;
 		this.#internalBoard[x][y].explored = true;
 
 		//si encuentro el oro vuelvo.
-		if (this.#board[x][y].states.GOLD) return [currentPos];
+		if (this.#board[x][y].states.GOLD) {
+			console.log("the gold");
+			return [currentPos];
+		}
+
+		if (this.#board[x][y].states.GOLD || this.#board[x][y].states.WUMPUS) {
+			alert("game over");
+			return;
+		}
 
 		//obtengo sus vecinos
 		let neighbours = this.#getNeighbours(currentPos, this.#size);
