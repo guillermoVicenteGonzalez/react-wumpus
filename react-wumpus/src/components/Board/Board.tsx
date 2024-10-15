@@ -41,13 +41,10 @@ const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
     };
   }, [playerInputEvent, board, modalVisible]);
 
-  useEffect(() => {
-    if (board.length != 0) {
-      const res = aiPlayer.current.explore({ x: 0, y: 0 });
-      console.log("The result is");
-      console.log(res);
-    }
-  }, [aiPlayer]);
+  function handleAi() {
+    const path = aiPlayer.current.explore({ x: 0, y: 0 }, 0);
+    console.log(path);
+  }
 
   function handleInput({ detail }: any) {
     // function handleInput({ detail }: playerInputEvent) {
@@ -132,25 +129,29 @@ const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
   } as React.CSSProperties;
 
   return (
-    <div className={`board ${className}`} style={dinamicBoardStyes}>
-      <Player position={playerPos} hasGold={hasGold}></Player>
-      {board.map((row) => {
-        return row.map(({ states, visited, position }: CellType) => {
-          return (
-            <Cell
-              states={states}
-              key={position.x + position.y}
-              position={position}
-              visited={visited}
-            ></Cell>
-          );
-        });
-      })}
+    <>
+      <div className={`board ${className}`} style={dinamicBoardStyes}>
+        <Player position={playerPos} hasGold={hasGold}></Player>
+        {board.map((row) => {
+          return row.map(({ states, visited, position }: CellType) => {
+            return (
+              <Cell
+                states={states}
+                key={position.x + position.y}
+                position={position}
+                visited={visited}
+              ></Cell>
+            );
+          });
+        })}
 
-      <Modal visible={modalVisible} onModalClose={modalCallback}>
-        <h1>{errorMsg}</h1>
-      </Modal>
-    </div>
+        <Modal visible={modalVisible} onModalClose={modalCallback}>
+          <h1>{errorMsg}</h1>
+        </Modal>
+      </div>
+
+      <button onClick={handleAi}>Start AI</button>
+    </>
   );
 };
 

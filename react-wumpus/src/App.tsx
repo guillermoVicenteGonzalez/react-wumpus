@@ -9,20 +9,26 @@ import MobileCtrl from "./components/MobileCtrl/MobileCtrl";
 const startingPos: Position = { x: 1, y: 1 };
 
 function App() {
-	const [boardSize, setBoardSize] = useState(10);
-	function handleResize(nSize: number) {
-		setBoardSize(nSize);
-	}
+  const [boardSize, setBoardSize] = useState(10);
+  function handleResize(nSize: number) {
+    setBoardSize(nSize);
+  }
 
-	return (
-		<PlayerPosContextProvider size={boardSize} startingPos={startingPos}>
-			<div className="app-container layout">
-				<DashBoard size={boardSize} onSizeChange={handleResize}></DashBoard>
-				<Board size={boardSize}></Board>
-			</div>
-			<MobileCtrl />
-		</PlayerPosContextProvider>
-	);
+  function handleStartAiExplore() {}
+
+  return (
+    <PlayerPosContextProvider size={boardSize} startingPos={startingPos}>
+      <div className="app-container layout">
+        <DashBoard
+          size={boardSize}
+          onSizeChange={handleResize}
+          action={handleStartAiExplore}
+        ></DashBoard>
+        <Board size={boardSize}></Board>
+      </div>
+      <MobileCtrl />
+    </PlayerPosContextProvider>
+  );
 }
 
 export default App;

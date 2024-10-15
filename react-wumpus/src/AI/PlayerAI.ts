@@ -29,8 +29,14 @@ export default class AIPlayer {
     this.#internalBoard = this.#generateInternalBoard(this.#size);
   }
 
+  getBoard() {
+    return this.#board;
+  }
+
   setBoard(nBoard: CellType[][]) {
+    console.log("Resseted the board");
     this.#board = nBoard;
+    console.log(this.#board);
   }
 
   resetInternalBoard() {
@@ -105,6 +111,7 @@ export default class AIPlayer {
     return nextStateBoard;
   }
 
+  //There should be another heuristic: "prioritize advancing on one axis"
   #orderNeighbours(neighbours: Position[], internalBoard: internalCell[][]) {
     let localNeighbours = [...neighbours];
 
@@ -181,6 +188,7 @@ export default class AIPlayer {
     console.log(neighbours);
     console.log("\n");
 
+    //if i use foreach, every call is done "at the same time"
     for (let i = 0; i < neighbours.length; i++) {
       const res: Array<Position> = this.explore(
         neighbours[i],
