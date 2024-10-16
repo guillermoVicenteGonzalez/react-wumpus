@@ -70,8 +70,6 @@ function createObstacles(board: Array<CellType[]>, size: number) {
     goldPos = randomPosition(min, max);
   }
   //TODO clean
-  console.log("The gold is at");
-  console.log(goldPos);
   obstacles.push(goldPos);
   board[goldPos.x][goldPos.y].states.GOLD = true;
 
@@ -100,12 +98,12 @@ export function useBoard(size: number = 10) {
 
   function visitCell({ x, y }: Position) {
     const auxBoard = [...board];
-    auxBoard[y - 1][x - 1].visited = true;
+    auxBoard[y][x].visited = true;
     setBoard(auxBoard);
   }
 
   function checkCell({ x, y }: Position): CellType {
-    return board[y - 1][x - 1];
+    return board[y][x];
   }
 
   function resetBoard() {

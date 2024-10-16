@@ -6,7 +6,7 @@ import { PlayerPosContextProvider } from "./contexts/positionContext";
 import DashBoard from "./components/dashboard/Dashboard";
 import MobileCtrl from "./components/MobileCtrl/MobileCtrl";
 
-const startingPos: Position = { x: 1, y: 1 };
+const startingPos: Position = { x: 0, y: 0 };
 
 function App() {
   const [boardSize, setBoardSize] = useState(10);

@@ -47,25 +47,25 @@ const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
   //generator function for handling the visual part of the AI exploration
   function* aiVisualExplore(path: Position[]) {
     for (let i = 0; i < path.length; i++) {
-      movePlayer({ x: path[i].y + 1, y: path[i].x + 1 });
+      movePlayer({ x: path[i].y, y: path[i].x });
       yield;
     }
 
     for (let i = path.length - 2; i >= 0; i--) {
-      movePlayer({ x: path[i].y + 1, y: path[i].x + 1 });
+      movePlayer({ x: path[i].y, y: path[i].x });
       yield;
     }
   }
 
   //gets the path to the gold and invokes periodically aiExplore to advance
-  function handleAi() {
-    const path = aiPlayer.current.explore({ x: 0, y: 0 }, 0);
+  function handleAi(startingPos: Position) {
+    console.log(startingPos);
+    const path = aiPlayer.current.explore(startingPos, 0);
     if (!path) return false;
     const exploreCoroutine = aiVisualExplore(path);
     const interval = setInterval(() => exploreCoroutine.next(), aiMoveTime);
 
     function stopExploringInterval() {
-      alert("im still here");
       clearInterval(interval);
       removeEventListener("keydown", stopExploringInterval);
     }
@@ -112,7 +112,7 @@ const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
 
   function gameCleanup() {
     resetBoard();
-    updatePlayerPos({ x: 1, y: 1 });
+    updatePlayerPos({ x: 0, y: 0 });
     setHasGold(false);
     setGameState("PLAYING");
   }
@@ -176,7 +176,13 @@ const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
         </Modal>
       </div>
 
-      <button onClick={handleAi}>Start AI</button>
+      <button
+        onClick={() => {
+          handleAi(playerPos);
+        }}
+      >
+        Start AI
+      </button>
     </>
   );
 };

@@ -30,9 +30,7 @@ export default class AIPlayer {
   }
 
   setBoard(nBoard: CellType[][]) {
-    console.log("Resseted the board");
     this.#board = nBoard;
-    console.log(this.#board);
   }
 
   resetInternalBoard() {

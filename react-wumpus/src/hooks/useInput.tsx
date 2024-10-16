@@ -21,8 +21,6 @@ export const useInput = () => {
     })
   );
 
-  //for mobile ctrl
-  //probably redundant and not really elegant
   function sendInput(input: Inputs) {
     setInput(input);
     playerInputEvent.current = new CustomEvent("playerInput", {
@@ -63,11 +61,7 @@ export const useInput = () => {
         break;
 
       default:
-      //not an "approved action => no flag"
-      // flag = false;
     }
-
-    // if (flag) document.dispatchEvent(playerInputEvent.current);
   }
 
   useEffect(() => {
