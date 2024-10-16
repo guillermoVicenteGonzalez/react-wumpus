@@ -7,7 +7,6 @@ export default function usePlayerPos(startingPos: Position, limit: number) {
   //falta un useEffect con limit para recalcular la posicion.
 
   function updatePlayerPos(nPos: Position) {
-    console.log(nPos);
     if (nPos.x > limit || nPos.y > limit || nPos.x <= 0 || nPos.y <= 0) {
       return -1;
     } else {

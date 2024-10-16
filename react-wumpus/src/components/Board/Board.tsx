@@ -6,7 +6,7 @@ import { comparePosition, useBoard } from "../../hooks/useBoard";
 import Modal from "../modal/Modal";
 import { PlayerPosContext } from "../../contexts/positionContext";
 import { useGameState } from "../../hooks/useGameState";
-import { useInput } from "../../hooks/useInput";
+import { playerInputEventType, useInput } from "../../hooks/useInput";
 import useAiPlayer from "../../hooks/useAIPlayer";
 
 interface Props {
@@ -27,6 +27,7 @@ const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
   const { playerInputEvent } = useInput();
   const aiPlayer = useAiPlayer(size, board);
 
+  //shows game over screen or victory screen when the game finishes
   const modalCallback = useCallback(() => {
     if (gameState === "GAME OVER" || gameState === "VICTORY") {
       gameCleanup();
@@ -34,6 +35,7 @@ const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
     setModalVisible(false);
   }, [gameState]);
 
+  //changes the position when player input is received.
   useEffect(() => {
     document.addEventListener(playerInputEvent.current.type, handleInput);
 
@@ -42,7 +44,8 @@ const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
     };
   }, [playerInputEvent, board, modalVisible]);
 
-  function* aiVisualExplore(path: Position[], interval?) {
+  //generator function for handling the visual part of the AI exploration
+  function* aiVisualExplore(path: Position[]) {
     for (let i = 0; i < path.length; i++) {
       movePlayer({ x: path[i].y + 1, y: path[i].x + 1 });
       yield;
@@ -52,19 +55,25 @@ const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
       movePlayer({ x: path[i].y + 1, y: path[i].x + 1 });
       yield;
     }
-
-    //remove interval
   }
 
+  //gets the path to the gold and invokes periodically aiExplore to advance
   function handleAi() {
     const path = aiPlayer.current.explore({ x: 0, y: 0 }, 0);
     if (!path) return false;
     const exploreCoroutine = aiVisualExplore(path);
-    setInterval(() => exploreCoroutine.next(), aiMoveTime);
+    const interval = setInterval(() => exploreCoroutine.next(), aiMoveTime);
+
+    function stopExploringInterval() {
+      alert("im still here");
+      clearInterval(interval);
+      removeEventListener("keydown", stopExploringInterval);
+    }
+
+    addEventListener("keydown", stopExploringInterval);
   }
 
-  function handleInput({ detail }: any) {
-    // function handleInput({ detail }: playerInputEvent) {
+  function handleInput({ detail }: playerInputEventType) {
     const direction = detail;
     const tempPos: Position = { ...playerPos };
 
