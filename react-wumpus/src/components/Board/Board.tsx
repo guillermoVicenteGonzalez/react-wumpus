@@ -158,12 +158,12 @@ const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
     <>
       <div className={`board ${className}`} style={dinamicBoardStyes}>
         <Player position={playerPos} hasGold={hasGold}></Player>
-        {board.map((row) => {
-          return row.map(({ states, visited, position }: CellType) => {
+        {board.map((row, index) => {
+          return row.map(({ states, visited, position }: CellType, jndex) => {
             return (
               <Cell
                 states={states}
-                key={position.x + position.y}
+                key={index.toString() + jndex.toString()}
                 position={position}
                 visited={visited}
               ></Cell>

@@ -7,16 +7,12 @@ Encontrarse STENCH  => implica tambien marcar esa casilla como safe.
 Hay que almacenar las RUTAS ya visitadas? para evitar loops. 
 */
 
-import { CellStates, CellType, Position } from "../types";
+import { CellType, Position } from "../types";
 
 type internalCell = {
   explored: boolean;
   state?: "dangerous" | "unsafe" | "safe";
 };
-
-// let board: CellType[][];
-// let internalBoard: internalCell[][];
-// let size: number;
 
 export default class AIPlayer {
   #board: CellType[][];
@@ -115,17 +111,11 @@ export default class AIPlayer {
   #orderNeighbours(neighbours: Position[], internalBoard: internalCell[][]) {
     let localNeighbours = [...neighbours];
 
-    //primero filtro las posiciones seguras.
-    localNeighbours = localNeighbours
-      // .filter(({ x, y }) => {
-      // 	return internalBoard[x][y].state != "insecure";
-      // })
-      .filter(({ x, y }) => {
-        return internalBoard[x][y].explored == false;
-      });
+    localNeighbours = localNeighbours.filter(({ x, y }) => {
+      return internalBoard[x][y].explored == false;
+    });
 
-    //luego ordeno en funcion de si están explorados o no.
-    localNeighbours = localNeighbours.sort((n1, n2) => {
+    localNeighbours = localNeighbours.sort((n1) => {
       if (internalBoard[n1.x][n1.y].state == "unsafe") return -1;
       return 1;
     });
@@ -133,12 +123,11 @@ export default class AIPlayer {
     return localNeighbours;
   }
 
-  explore(currentPos: Position, currentDepth: number = 0) {
+  explore(currentPos: Position, currentDepth: number = 0): Position[] | null {
     const { x, y } = currentPos;
 
     //if the depth is greater than the space of possibilities (the size) => return
     if (currentDepth >= 40) {
-      console.log("Too much exploration");
       return null;
     }
 
@@ -147,14 +136,11 @@ export default class AIPlayer {
 
     //If it is the gold => return
     if (this.#board[x][y].states.GOLD) {
-      console.log("Found the gold");
-      console.log(currentPos);
       return [currentPos];
     }
 
     //I check that it isn't the WELL or the WUMPUS
     if (this.#board[x][y].states.WELL || this.#board[x][y].states.WUMPUS) {
-      console.log("Foun wumpus or well => game over");
       return null;
     }
 
@@ -171,11 +157,6 @@ export default class AIPlayer {
       this.#internalBoard
     );
 
-    console.log("Iteration: " + currentDepth + "--------------------");
-    console.log(currentPos);
-    console.log("total neighbours");
-    console.log(neighbours);
-
     //now we order the neighbours and explore the optimal one
     neighbours = this.#orderNeighbours(neighbours, this.#internalBoard);
     if (neighbours.length == 0) {
@@ -184,21 +165,14 @@ export default class AIPlayer {
     }
 
     //we define the situation
-    console.log("unexplored neighbours");
-    console.log(neighbours);
-    console.log("\n");
-
     //if i use foreach, every call is done "at the same time"
     for (let i = 0; i < neighbours.length; i++) {
-      const res: Array<Position> = this.explore(
+      const res: Array<Position> | null = this.explore(
         neighbours[i],
         currentDepth + 1
       );
       if (res != null) {
-        const path = [currentPos, ...res];
-        console.log("path is");
-        console.log(path);
-        return path;
+        return [currentPos, ...res];
       }
     }
 

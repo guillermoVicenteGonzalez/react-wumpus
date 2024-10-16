@@ -6,8 +6,11 @@ const useAiPlayer = (size: number, board: CellType[][]) => {
   const aiPlayer = useRef<AIPlayer>(new AIPlayer(size, board));
 
   useEffect(() => {
-    aiPlayer.current.setSize(size);
-  }, [size]);
+    if (size != board.length) {
+      aiPlayer.current.setSize(size);
+      aiPlayer.current.setBoard(board);
+    }
+  }, [size, board]);
 
   useEffect(() => {
     aiPlayer.current.setBoard(board);

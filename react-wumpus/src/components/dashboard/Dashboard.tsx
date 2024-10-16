@@ -1,6 +1,5 @@
 import Cell from "../Board/Cell";
 import { useState } from "react";
-import Test from "../Test/Test";
 
 interface DashBoardProps {
   size: number;
