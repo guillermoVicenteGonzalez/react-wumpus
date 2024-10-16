@@ -10,7 +10,6 @@ const useAiPlayer = (size: number, board: CellType[][]) => {
   }, [size]);
 
   useEffect(() => {
-    console.log("preparing board\n");
     aiPlayer.current.setBoard(board);
   }, [board]);
 

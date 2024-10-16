@@ -125,7 +125,7 @@ export default class AIPlayer {
       });
 
     //luego ordeno en funcion de si están explorados o no.
-    localNeighbours = localNeighbours.sort((n1, _n2) => {
+    localNeighbours = localNeighbours.sort((n1, n2) => {
       if (internalBoard[n1.x][n1.y].state == "unsafe") return -1;
       return 1;
     });
@@ -133,7 +133,7 @@ export default class AIPlayer {
     return localNeighbours;
   }
 
-  explore(currentPos: Position, currentDepth: number = 0, action?: () => void) {
+  explore(currentPos: Position, currentDepth: number = 0) {
     const { x, y } = currentPos;
 
     //if the depth is greater than the space of possibilities (the size) => return
@@ -154,7 +154,7 @@ export default class AIPlayer {
 
     //I check that it isn't the WELL or the WUMPUS
     if (this.#board[x][y].states.WELL || this.#board[x][y].states.WUMPUS) {
-      console.log("Game over");
+      console.log("Foun wumpus or well => game over");
       return null;
     }
 

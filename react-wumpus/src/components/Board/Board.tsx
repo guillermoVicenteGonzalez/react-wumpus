@@ -17,6 +17,7 @@ interface Props {
 type GameState = "VICTORY" | "GAME OVER" | "PLAYING";
 
 const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
+  const aiMoveTime = 500; //500 ms
   const { board, visitCell, checkCell, resetBoard } = useBoard(size);
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [modalVisible, setModalVisible] = useState<boolean>(false);
@@ -41,9 +42,25 @@ const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
     };
   }, [playerInputEvent, board, modalVisible]);
 
+  function* aiVisualExplore(path: Position[], interval?) {
+    for (let i = 0; i < path.length; i++) {
+      movePlayer({ x: path[i].y + 1, y: path[i].x + 1 });
+      yield;
+    }
+
+    for (let i = path.length - 2; i >= 0; i--) {
+      movePlayer({ x: path[i].y + 1, y: path[i].x + 1 });
+      yield;
+    }
+
+    //remove interval
+  }
+
   function handleAi() {
     const path = aiPlayer.current.explore({ x: 0, y: 0 }, 0);
-    console.log(path);
+    if (!path) return false;
+    const exploreCoroutine = aiVisualExplore(path);
+    setInterval(() => exploreCoroutine.next(), aiMoveTime);
   }
 
   function handleInput({ detail }: any) {
