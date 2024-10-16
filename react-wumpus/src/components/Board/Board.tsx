@@ -15,9 +15,9 @@ interface Props {
 }
 
 type GameState = "VICTORY" | "GAME OVER" | "PLAYING";
+const aiMoveTime = 500; //500 ms
 
 const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
-  const aiMoveTime = 500; //500 ms
   const { board, visitCell, checkCell, resetBoard } = useBoard(size);
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [modalVisible, setModalVisible] = useState<boolean>(false);
@@ -59,7 +59,7 @@ const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
 
   //gets the path to the gold and invokes periodically aiExplore to advance
   function handleAi(startingPos: Position) {
-    console.log(startingPos);
+    console.log("handle ai");
     const path = aiPlayer.current.explore(startingPos, 0);
     if (!path) return false;
     const exploreCoroutine = aiVisualExplore(path);

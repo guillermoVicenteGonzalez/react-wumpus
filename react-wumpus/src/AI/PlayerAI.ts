@@ -158,7 +158,6 @@ export default class AIPlayer {
     //now we order the neighbours and explore the optimal one
     neighbours = this.#orderNeighbours(neighbours, this.#internalBoard);
     if (neighbours.length == 0) {
-      console.log("No more paths");
       return null;
     }
 
