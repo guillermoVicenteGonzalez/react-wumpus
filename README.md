@@ -12,8 +12,14 @@ A World of wumpus clone made using react + ts
 - [ ] styles
 - [x] correct resizing
 - [x] game logic
-- [ ] Self play (backtracking?)
-- [ ] Correct event typing
+- [x] Self play (backtracking?)
+- [x] Correct event typing
+- [ ] Show board
+- [ ] Play again => reset board (with reset gold etc)
+- [ ] on game over or similar => board reset => player AI
+- [ ] Restart AI from player position
+  - [ ] Works, but the internal board was not updated =>
+    - update internal board useEffect needed => sets visited and obstacles according to the changes on the board
 
 ## Notes
 
@@ -72,20 +78,20 @@ With the modal the issue is similar
 
 ```tsx
 useEffect(() => {
-	document.addEventListener(playerInputEvent.current.type, handleCancelKey);
+  document.addEventListener(playerInputEvent.current.type, handleCancelKey);
 
-	return () => {
-		document.removeEventListener(
-			playerInputEvent.current.type,
-			handleCancelKey
-		);
-	};
+  return () => {
+    document.removeEventListener(
+      playerInputEvent.current.type,
+      handleCancelKey
+    );
+  };
 }, []);
 
 function handleCancelKey({ detail }: playerInputEvent) {
-	if (detail == "CANCEL" || detail == "ACCEPT") {
-		onModalClose();
-	}
+  if (detail == "CANCEL" || detail == "ACCEPT") {
+    onModalClose();
+  }
 }
 ```
 
@@ -94,20 +100,20 @@ The solution is to add onModalClose to the dependency array so the event listene
 
 ```tsx
 useEffect(() => {
-	document.addEventListener(playerInputEvent.current.type, handleCancelKey);
+  document.addEventListener(playerInputEvent.current.type, handleCancelKey);
 
-	return () => {
-		document.removeEventListener(
-			playerInputEvent.current.type,
-			handleCancelKey
-		);
-	};
+  return () => {
+    document.removeEventListener(
+      playerInputEvent.current.type,
+      handleCancelKey
+    );
+  };
 }, [onModalClose]);
 
 function handleCancelKey({ detail }: playerInputEvent) {
-	if (detail == "CANCEL" || detail == "ACCEPT") {
-		onModalClose();
-	}
+  if (detail == "CANCEL" || detail == "ACCEPT") {
+    onModalClose();
+  }
 }
 ```
 
@@ -115,11 +121,11 @@ To make this event better, the parent of the modal component, who holds the decl
 
 ```tsx
 const modalCallback = useCallback(() => {
-	console.log(gameState);
-	if (gameState === "GAME OVER" || gameState === "VICTORY") {
-		console.log("cleanup");
-		gameCleanup();
-	}
-	setModalVisible(false);
+  console.log(gameState);
+  if (gameState === "GAME OVER" || gameState === "VICTORY") {
+    console.log("cleanup");
+    gameCleanup();
+  }
+  setModalVisible(false);
 }, [gameState]);
 ```
