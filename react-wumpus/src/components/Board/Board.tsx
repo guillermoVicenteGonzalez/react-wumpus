@@ -37,10 +37,16 @@ const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
 
   //changes the position when player input is received.
   useEffect(() => {
-    document.addEventListener(playerInputEvent.current.type, handleInput);
+    document.addEventListener(
+      playerInputEvent.current.type,
+      handleInput as EventListener
+    );
 
     return () => {
-      document.removeEventListener(playerInputEvent.current.type, handleInput);
+      document.removeEventListener(
+        playerInputEvent.current.type,
+        handleInput as EventListener
+      );
     };
   }, [playerInputEvent, board, modalVisible]);
 
