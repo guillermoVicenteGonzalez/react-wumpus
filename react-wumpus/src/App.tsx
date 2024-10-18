@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import type { Position } from "./types";
 import "./App.scss";
 import Board from "./components/Board/Board";
@@ -15,6 +15,7 @@ import usePlayerPos from "./hooks/usePlayerPos";
 
 const aiMoveTime = 300; //500 ms
 const startingPos = { x: 0, y: 0 };
+const aiFlag = false;
 
 function App() {
   const [boardSize, setBoardSize] = useState(10);
@@ -27,6 +28,7 @@ function App() {
   const { gameState, setGameState } = useGameState("PLAYING", onStateChange);
   const { playerInputEvent } = useInput();
   const aiPlayer = useAiPlayer(boardSize, board);
+  const aiPlaying = useRef(false);
 
   const modalCallback = useCallback(() => {
     if (gameState === "GAME OVER" || gameState === "VICTORY") {
@@ -51,6 +53,7 @@ function App() {
 
   //gets the path to the gold and invokes periodically aiExplore to advance
   function handleAi(startingPos: Position) {
+    aiPlaying.current = true;
     setModalVisible(true);
     setErrorMsg("Calculating path to gold");
     aiPlayer.current.regenerateInternalBoard();
@@ -64,7 +67,10 @@ function App() {
     }
 
     const exploreCoroutine = aiVisualExplore(path);
-    const interval = setInterval(() => exploreCoroutine.next(true), aiMoveTime);
+    const interval = setInterval(
+      () => exploreCoroutine.next(aiPlaying.current),
+      aiMoveTime
+    );
 
     function stopExploringInterval() {
       clearInterval(interval);
@@ -75,21 +81,21 @@ function App() {
   }
 
   function* aiVisualExplore(path: Position[]) {
-    let flag = false;
+    let flag = true;
     let i = 0;
 
-    do {
+    while (i < path.length && flag) {
       movePlayer({ x: path[i].y, y: path[i].x });
       i++;
       flag = yield;
-    } while (i < path.length && flag);
+    }
 
     i--;
-    do {
+    while (i >= 0 && flag) {
       movePlayer({ x: path[i].y, y: path[i].x });
       flag = yield;
       i--;
-    } while (i >= 0 && flag);
+    }
   }
 
   function onStateChange(state: GameState) {
@@ -132,6 +138,7 @@ function App() {
   function gameCleanup() {
     resetBoard();
     aiPlayer.current.resetInternalBoard();
+    aiPlaying.current = false;
     updatePlayerPos({ x: 0, y: 0 });
     setHasGold(false);
     setGameState("PLAYING");
