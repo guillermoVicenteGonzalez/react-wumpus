@@ -10,11 +10,14 @@ const startingPos: Position = { x: 0, y: 0 };
 
 function App() {
   const [boardSize, setBoardSize] = useState(10);
+  const [boardVisible, setBoardVisible] = useState(false);
   function handleResize(nSize: number) {
     setBoardSize(nSize);
   }
 
-  function handleStartAiExplore() {}
+  function toggleBoardVisibility(flag: boolean) {
+    setBoardVisible(flag);
+  }
 
   return (
     <PlayerPosContextProvider size={boardSize} startingPos={startingPos}>
@@ -22,9 +25,9 @@ function App() {
         <DashBoard
           size={boardSize}
           onSizeChange={handleResize}
-          action={handleStartAiExplore}
+          setBoardVisible={toggleBoardVisibility}
         ></DashBoard>
-        <Board size={boardSize}></Board>
+        <Board size={boardSize} visible={boardVisible}></Board>
       </div>
       <MobileCtrl />
     </PlayerPosContextProvider>

@@ -12,12 +12,17 @@ import useAiPlayer from "../../hooks/useAIPlayer";
 interface Props {
   size: number;
   className?: string;
+  visible?: boolean;
 }
 
 type GameState = "VICTORY" | "GAME OVER" | "PLAYING";
 const aiMoveTime = 500; //500 ms
 
-const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
+const Board: React.FC<Props> = ({
+  size = 10,
+  className = "",
+  visible = false,
+}) => {
   const { board, visitCell, checkCell, resetBoard } = useBoard(size);
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [modalVisible, setModalVisible] = useState<boolean>(false);
@@ -171,7 +176,7 @@ const Board: React.FC<Props> = ({ size = 10, className = "" }) => {
                 states={states}
                 key={index.toString() + jndex.toString()}
                 position={position}
-                visited={visited}
+                visited={visible ? true : visited}
               ></Cell>
             );
           });
