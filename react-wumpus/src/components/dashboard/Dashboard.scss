@@ -178,8 +178,10 @@ $animation-time: 0.4s;
     .reset-board-btn {
       background-color: red;
 
-      &:active {
-        background-color: rgba(red, 0.4);
+      & {
+        &:active {
+          background-color: rgba(red, 0.4);
+        }
       }
 
       &:hover {

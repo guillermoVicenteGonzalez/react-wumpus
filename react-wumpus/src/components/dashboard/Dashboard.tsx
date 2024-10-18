@@ -7,12 +7,13 @@ interface DashBoardProps {
   action?: () => void;
   setBoardVisible?: (flag: boolean) => void;
   onResetBoard?: () => void;
+  startAi?: () => void;
 }
 
 const DashBoard: React.FC<DashBoardProps> = ({
   size,
   onSizeChange,
-  action,
+  startAi,
   setBoardVisible,
   onResetBoard,
 }) => {
@@ -116,7 +117,7 @@ const DashBoard: React.FC<DashBoardProps> = ({
       </div>
 
       <div className="dashboard__section dashboard__controls">
-        <button onClick={action}>Auto solve</button>
+        <button onClick={startAi}>Auto solve</button>
 
         <button
           onMouseDown={() => (setBoardVisible ? setBoardVisible(true) : null)}

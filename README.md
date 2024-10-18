@@ -14,7 +14,7 @@ A World of wumpus clone made using react + ts
 - [x] game logic
 - [x] Self play (backtracking?)
 - [x] Correct event typing
-- [ ] Show board
+- [x] Show board
 - [ ] Play again => reset board (with reset gold etc)
 - [ ] on game over or similar => board reset => player AI
 - [ ] Restart AI from player position
