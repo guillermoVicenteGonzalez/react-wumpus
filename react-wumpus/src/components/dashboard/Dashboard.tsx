@@ -6,6 +6,7 @@ interface DashBoardProps {
   onSizeChange: (nSize: number) => void;
   action?: () => void;
   setBoardVisible?: (flag: boolean) => void;
+  onResetBoard?: () => void;
 }
 
 const DashBoard: React.FC<DashBoardProps> = ({
@@ -13,6 +14,7 @@ const DashBoard: React.FC<DashBoardProps> = ({
   onSizeChange,
   action,
   setBoardVisible,
+  onResetBoard,
 }) => {
   const [visible, setVisible] = useState<boolean>(true);
 
@@ -121,6 +123,10 @@ const DashBoard: React.FC<DashBoardProps> = ({
           onMouseUp={() => (setBoardVisible ? setBoardVisible(false) : null)}
         >
           Show board
+        </button>
+
+        <button className="reset-board-btn" onClick={onResetBoard}>
+          Reset Board
         </button>
 
         <div className="dashboard__controls__size size-control">
