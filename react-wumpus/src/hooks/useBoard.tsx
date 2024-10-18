@@ -98,7 +98,6 @@ export function useBoard(size: number = 10) {
 
   function visitCell({ x, y }: Position) {
     const auxBoard = [...board];
-    console.log(size);
     if (x >= size || y >= size) return false;
     auxBoard[y][x].visited = true;
     setBoard(auxBoard);

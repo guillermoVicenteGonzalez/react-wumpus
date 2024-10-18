@@ -18,11 +18,13 @@ export default class AIPlayer {
   #board: CellType[][];
   #internalBoard: internalCell[][];
   #size: number;
+  #startingPos: Position = { x: 0, y: 0 };
 
-  constructor(size: number, board: CellType[][]) {
+  constructor(size: number, board: CellType[][], startPos?: Position) {
     this.#size = size;
     this.#board = board;
     this.#internalBoard = this.#generateInternalBoard(this.#size);
+    if (startPos != null) this.#startingPos = startPos;
   }
 
   getBoard() {
@@ -39,6 +41,7 @@ export default class AIPlayer {
   }
 
   //uses current board
+  //doesnt work
   updateInternalBoard() {
     const visitedCells = this.#board
       .map((row) => {
@@ -47,11 +50,37 @@ export default class AIPlayer {
       .flat();
 
     console.log(visitedCells);
-
+    let tempBoard = [...this.#internalBoard];
     //we set each visited cell to explored
 
     for (let i = 0; i < visitedCells.length; i++) {
       const { x, y } = visitedCells[i].position;
+      tempBoard[x][y].explored = true;
+      tempBoard = this.#updateInternalState({ x, y }, tempBoard);
+    }
+
+    this.#internalBoard = [...tempBoard];
+
+    console.log(this.#internalBoard);
+  }
+
+  regenerateInternalBoard() {
+    console.log(this.#internalBoard);
+    const visitedCells = this.#board
+      .map((row) => {
+        return row.filter((cell) => cell.visited);
+      })
+      .flat();
+
+    console.log(visitedCells);
+
+    //i reset the board
+    this.#internalBoard = this.#generateInternalBoard(this.#size);
+
+    //we set each visited cell to explored
+    for (let i = 0; i < visitedCells.length; i++) {
+      const { x, y } = visitedCells[i].position;
+      //this is a mess
       this.#internalBoard[x][y].explored = true;
       this.#internalBoard = this.#updateInternalState(
         { x, y },
@@ -150,7 +179,7 @@ export default class AIPlayer {
     const { x, y } = currentPos;
 
     //if the depth is greater than the space of possibilities (the size) => return
-    if (currentDepth >= 40) {
+    if (currentDepth >= this.#size * 2) {
       return null;
     }
 

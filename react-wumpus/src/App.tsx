@@ -1,4 +1,4 @@
-import { useState, useContext, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect } from "react";
 import type { Position } from "./types";
 import "./App.scss";
 import Board from "./components/Board/Board";
@@ -10,11 +10,10 @@ import { useInput } from "./hooks/useInput";
 import useAiPlayer from "./hooks/useAIPlayer";
 import Player from "./components/player/player";
 import Modal from "./components/modal/Modal";
-import { PlayerPosContext } from "./contexts/positionContext";
 import { playerInputEventType } from "./hooks/useInput";
 import usePlayerPos from "./hooks/usePlayerPos";
 
-const aiMoveTime = 500; //500 ms
+const aiMoveTime = 300; //500 ms
 const startingPos = { x: 0, y: 0 };
 
 function App() {
@@ -52,12 +51,18 @@ function App() {
 
   //gets the path to the gold and invokes periodically aiExplore to advance
   function handleAi(startingPos: Position) {
-    console.clear();
-    console.log("handle ai");
-    // aiPlayer.current.resetInternalBoard(); //TODO updateInternalBoard()
-    aiPlayer.current.updateInternalBoard();
+    setModalVisible(true);
+    setErrorMsg("Calculating path to gold");
+    aiPlayer.current.regenerateInternalBoard();
     const path = aiPlayer.current.explore(startingPos, 0);
-    if (!path) return false;
+    setModalVisible(false);
+
+    if (!path) {
+      setModalVisible(true);
+      setErrorMsg("Unable to find a path");
+      return false;
+    }
+
     const exploreCoroutine = aiVisualExplore(path);
     const interval = setInterval(() => exploreCoroutine.next(true), aiMoveTime);
 
@@ -137,10 +142,8 @@ function App() {
     //visit the previous cell (just in case)
     let playerHasGold: boolean = hasGold;
     visitCell(playerPos);
-    console.log(x, y);
 
     const err = updatePlayerPos({ x, y });
-    console.log(`the error is ${err}`);
     if (err === -1) {
       setModalVisible(true);
       setErrorMsg("The player is out of bounds");
