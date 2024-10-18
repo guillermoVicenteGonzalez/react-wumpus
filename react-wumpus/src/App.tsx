@@ -52,7 +52,10 @@ function App() {
 
   //gets the path to the gold and invokes periodically aiExplore to advance
   function handleAi(startingPos: Position) {
+    console.clear();
     console.log("handle ai");
+    // aiPlayer.current.resetInternalBoard(); //TODO updateInternalBoard()
+    aiPlayer.current.updateInternalBoard();
     const path = aiPlayer.current.explore(startingPos, 0);
     if (!path) return false;
     const exploreCoroutine = aiVisualExplore(path);
@@ -67,15 +70,6 @@ function App() {
   }
 
   function* aiVisualExplore(path: Position[]) {
-    // for (let i = 0; i < path.length; i++) {
-    //   movePlayer({ x: path[i].y, y: path[i].x });
-    //   yield;
-    // }
-
-    // for (let i = path.length - 2; i >= 0; i--) {
-    //   movePlayer({ x: path[i].y, y: path[i].x });
-    //   yield;
-    // }
     let flag = false;
     let i = 0;
 
@@ -132,6 +126,7 @@ function App() {
 
   function gameCleanup() {
     resetBoard();
+    aiPlayer.current.resetInternalBoard();
     updatePlayerPos({ x: 0, y: 0 });
     setHasGold(false);
     setGameState("PLAYING");

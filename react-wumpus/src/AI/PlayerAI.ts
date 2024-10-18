@@ -34,7 +34,32 @@ export default class AIPlayer {
   }
 
   resetInternalBoard() {
+    "regenerating internal board";
     this.#internalBoard = this.#generateInternalBoard(this.#size);
+  }
+
+  //uses current board
+  updateInternalBoard() {
+    const visitedCells = this.#board
+      .map((row) => {
+        return row.filter((cell) => cell.visited);
+      })
+      .flat();
+
+    console.log(visitedCells);
+
+    //we set each visited cell to explored
+
+    for (let i = 0; i < visitedCells.length; i++) {
+      const { x, y } = visitedCells[i].position;
+      this.#internalBoard[x][y].explored = true;
+      this.#internalBoard = this.#updateInternalState(
+        { x, y },
+        this.#internalBoard
+      );
+    }
+
+    console.log(this.#internalBoard);
   }
 
   setSize(nSize: number) {
@@ -158,6 +183,7 @@ export default class AIPlayer {
     //now we order the neighbours and explore the optimal one
     neighbours = this.#orderNeighbours(neighbours, this.#internalBoard);
     if (neighbours.length == 0) {
+      console.log("no cells to travel to");
       return null;
     }
 
