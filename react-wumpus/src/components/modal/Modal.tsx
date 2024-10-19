@@ -1,4 +1,4 @@
-import { EventHandler, useEffect } from "react";
+import { useEffect } from "react";
 import { playerInputEventType, useInput } from "../../hooks/useInput";
 
 interface Props {

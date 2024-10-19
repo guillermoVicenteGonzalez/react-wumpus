@@ -15,7 +15,6 @@ import usePlayerPos from "./hooks/usePlayerPos";
 
 const aiMoveTime = 300; //500 ms
 const startingPos = { x: 0, y: 0 };
-const aiFlag = false;
 
 function App() {
   const [boardSize, setBoardSize] = useState(10);

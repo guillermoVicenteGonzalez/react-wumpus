@@ -1,47 +1,53 @@
 import { type CellType } from "../../types";
 
-const Cell: React.FC<CellType> = ({ visited, states }) => {
-	const cellState = visited ? "cell--visited" : "";
-	function cellColor() {
-		let colors: string[] = [];
+interface CellComponentProps {
+  position?: CellType["position"];
+  states: CellType["states"];
+  visited: CellType["visited"];
+}
 
-		if (states.BREEZE == true) {
-			colors.push("var(--breeze-color)");
-		}
+const Cell: React.FC<CellComponentProps> = ({ visited, states }) => {
+  const cellState = visited ? "cell--visited" : "";
+  function cellColor() {
+    let colors: string[] = [];
 
-		if (states.STENCH == true) {
-			colors.push("var(--stench-color)");
-		}
+    if (states.BREEZE == true) {
+      colors.push("var(--breeze-color)");
+    }
 
-		if (states.GOLD == true) {
-			colors = ["var(--gold-color)"];
-		}
+    if (states.STENCH == true) {
+      colors.push("var(--stench-color)");
+    }
 
-		if (states.WUMPUS == true) {
-			colors = ["var(--wumpus-color)"];
-		}
+    if (states.GOLD == true) {
+      colors = ["var(--gold-color)"];
+    }
 
-		if (states.WELL == true) {
-			colors = ["var(--well-color)"];
-		}
-		if (states.START) {
-			colors = ["var(--start-color)"];
-		}
+    if (states.WUMPUS == true) {
+      colors = ["var(--wumpus-color)"];
+    }
 
-		if (colors.length > 1) {
-			return {
-				backgroundImage: `linear-gradient(${colors.toString()})`,
-			} as React.CSSProperties;
-		} else {
-			return { backgroundColor: colors.toString() } as React.CSSProperties;
-		}
-	}
+    if (states.WELL == true) {
+      colors = ["var(--well-color)"];
+    }
+    if (states.START) {
+      colors = ["var(--start-color)"];
+    }
 
-	return (
-		<div className={`cell ${cellState} `} style={cellColor()}>
-			{}
-		</div>
-	);
+    if (colors.length > 1) {
+      return {
+        backgroundImage: `linear-gradient(${colors.toString()})`,
+      } as React.CSSProperties;
+    } else {
+      return { backgroundColor: colors.toString() } as React.CSSProperties;
+    }
+  }
+
+  return (
+    <div className={`cell ${cellState} `} style={cellColor()}>
+      {}
+    </div>
+  );
 };
 
 export default Cell;
