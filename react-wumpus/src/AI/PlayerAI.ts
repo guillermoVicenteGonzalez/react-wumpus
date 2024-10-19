@@ -268,11 +268,12 @@ export default class AIPlayer {
       return [pos];
     }
 
+    //i get the neighbours and filter only the ones explored => safe
     let neighbours = this.#getNeighbours(pos, this.#size);
     console.log("unfiltered neighbours");
     console.log(neighbours);
     neighbours = neighbours.filter(({ x, y }) => {
-      if (this.#internalBoard[x][y].explored) return { x, y };
+      if (this.#internalBoard[x][y].state == "safe") return { x, y };
     });
 
     if (neighbours.length == 0) {
