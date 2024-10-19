@@ -18,11 +18,13 @@ export default class AIPlayer {
   #board: CellType[][];
   #internalBoard: internalCell[][];
   #size: number;
+  #startingPos: Position = { x: 0, y: 0 };
 
-  constructor(size: number, board: CellType[][]) {
+  constructor(size: number, board: CellType[][], startPos?: Position) {
     this.#size = size;
     this.#board = board;
     this.#internalBoard = this.#generateInternalBoard(this.#size);
+    if (startPos != null) this.#startingPos = startPos;
   }
 
   getBoard() {
@@ -34,7 +36,51 @@ export default class AIPlayer {
   }
 
   resetInternalBoard() {
+    "regenerating internal board";
     this.#internalBoard = this.#generateInternalBoard(this.#size);
+  }
+
+  //uses current board
+  //doesnt work
+  updateInternalBoard() {
+    const visitedCells = this.#board
+      .map((row) => {
+        return row.filter((cell) => cell.visited);
+      })
+      .flat();
+
+    let tempBoard = [...this.#internalBoard];
+    //we set each visited cell to explored
+
+    for (let i = 0; i < visitedCells.length; i++) {
+      const { x, y } = visitedCells[i].position;
+      tempBoard[x][y].explored = true;
+      tempBoard = this.#updateInternalState({ x, y }, tempBoard);
+    }
+
+    this.#internalBoard = [...tempBoard];
+  }
+
+  regenerateInternalBoard() {
+    const visitedCells = this.#board
+      .map((row) => {
+        return row.filter((cell) => cell.visited);
+      })
+      .flat();
+
+    //i reset the board
+    this.#internalBoard = this.#generateInternalBoard(this.#size);
+
+    //we set each visited cell to explored
+    for (let i = 0; i < visitedCells.length; i++) {
+      const { x, y } = visitedCells[i].position;
+      //this is a mess
+      this.#internalBoard[x][y].explored = true;
+      this.#internalBoard = this.#updateInternalState(
+        { x, y },
+        this.#internalBoard
+      );
+    }
   }
 
   setSize(nSize: number) {
@@ -80,6 +126,38 @@ export default class AIPlayer {
     return cells;
   }
 
+  getPath(startingPos: Position) {
+    //i get the path to the gold
+    const pathToGold = this.#explore(startingPos, 0);
+    if (!pathToGold) return null;
+    const goldPos = pathToGold[pathToGold.length - 1];
+    console.log(pathToGold);
+
+    //i clean the internal board
+    const tempInternalBoard = [...this.#internalBoard];
+    for (let i = 0; i < tempInternalBoard.length; i++) {
+      for (let j = 0; j < tempInternalBoard[i].length; j++) {
+        if (pathToGold.find((element) => element.x == i && element.y == j)) {
+          tempInternalBoard[i][j].explored = true;
+        } else tempInternalBoard[i][j].explored = false;
+      }
+    }
+
+    this.#internalBoard = [...tempInternalBoard];
+    console.log(this.#internalBoard);
+
+    //then i calculate the path back
+    const backPath = this.#calculateBackPath(goldPos);
+    let res = [];
+    if (backPath != null) {
+      res = [...pathToGold, ...backPath];
+    } else {
+      console.log("just reversing path taken");
+      res = [...pathToGold, ...pathToGold.reverse()];
+    }
+    return res;
+  }
+
   #updateInternalState(currentPos: Position, internalBoard: internalCell[][]) {
     const { x, y } = currentPos;
     const neighbours = this.#getNeighbours(currentPos, this.#size);
@@ -121,11 +199,11 @@ export default class AIPlayer {
     return localNeighbours;
   }
 
-  explore(currentPos: Position, currentDepth: number = 0): Position[] | null {
+  #explore(currentPos: Position, currentDepth: number = 0): Position[] | null {
     const { x, y } = currentPos;
 
     //if the depth is greater than the space of possibilities (the size) => return
-    if (currentDepth >= 40) {
+    if (currentDepth >= this.#size * this.#size) {
       return null;
     }
 
@@ -164,7 +242,7 @@ export default class AIPlayer {
     //we define the situation
     //if i use foreach, every call is done "at the same time"
     for (let i = 0; i < neighbours.length; i++) {
-      const res: Array<Position> | null = this.explore(
+      const res: Array<Position> | null = this.#explore(
         neighbours[i],
         currentDepth + 1
       );
@@ -174,5 +252,64 @@ export default class AIPlayer {
     }
 
     return null;
+  }
+
+  #calculateBackPath(
+    pos: Position,
+    explored: Position[] = [],
+    currentDepth: number = 0
+  ): Position[] | null {
+    if (currentDepth >= this.#size * this.#size) return null;
+    console.log("\nIteration nº " + currentDepth + " --------------");
+    console.log("pos : " + pos.x + " " + pos.y);
+
+    if (pos.x == this.#startingPos.x && pos.y == this.#startingPos.y) {
+      console.log("I arrived at my destination");
+      return [pos];
+    }
+
+    //i get the neighbours and filter only the ones explored => safe
+    let neighbours = this.#getNeighbours(pos, this.#size);
+    console.log("unfiltered neighbours");
+    console.log(neighbours);
+    neighbours = neighbours.filter(({ x, y }) => {
+      if (this.#internalBoard[x][y].state == "safe") return { x, y };
+    });
+
+    if (neighbours.length == 0) {
+      console.log("no elegible neighbours");
+      return null;
+    }
+
+    //now i order them by distance to starting pos
+    neighbours.sort((n1, n2) => {
+      if (
+        this.#calculateDistance(n1, this.#startingPos) >
+        this.#calculateDistance(n2, this.#startingPos)
+      )
+        return 1;
+      else return -1;
+    });
+
+    console.log("Sorted neighbours");
+    console.log(neighbours);
+    console.log("Next position");
+    console.log(neighbours[0]);
+
+    const res = this.#calculateBackPath(
+      neighbours[0],
+      [pos, ...explored],
+      currentDepth + 1
+    );
+
+    if (res == null) return null;
+
+    return [pos, ...res];
+  }
+
+  #calculateDistance(origin: Position, destination: Position) {
+    const xDist = Math.abs(destination.x - origin.x);
+    const yDist = Math.abs(destination.y - origin.y);
+    return xDist + yDist;
   }
 }

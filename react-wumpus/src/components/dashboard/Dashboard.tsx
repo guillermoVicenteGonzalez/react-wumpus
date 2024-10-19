@@ -5,12 +5,17 @@ interface DashBoardProps {
   size: number;
   onSizeChange: (nSize: number) => void;
   action?: () => void;
+  setBoardVisible?: (flag: boolean) => void;
+  onResetBoard?: () => void;
+  startAi?: () => void;
 }
 
 const DashBoard: React.FC<DashBoardProps> = ({
   size,
   onSizeChange,
-  action,
+  startAi,
+  setBoardVisible,
+  onResetBoard,
 }) => {
   const [visible, setVisible] = useState<boolean>(true);
 
@@ -111,19 +116,32 @@ const DashBoard: React.FC<DashBoardProps> = ({
         </div>
       </div>
 
-      <div className="dashboard__section size-control">
-        <input
-          className="size-control__range"
-          max={20}
-          min={4}
-          type="range"
-          value={size}
-          onChange={handleSizeChange}
-        ></input>
-        <span>size: {size}</span>
-      </div>
+      <div className="dashboard__section dashboard__controls">
+        <button onClick={startAi}>Auto solve</button>
 
-      <button onClick={action}>Auto solve</button>
+        <button
+          onMouseDown={() => (setBoardVisible ? setBoardVisible(true) : null)}
+          onMouseUp={() => (setBoardVisible ? setBoardVisible(false) : null)}
+        >
+          Show board
+        </button>
+
+        <button className="reset-board-btn" onClick={onResetBoard}>
+          Reset Board
+        </button>
+
+        <div className="dashboard__controls__size size-control">
+          <input
+            className="size-control__range"
+            max={20}
+            min={4}
+            type="range"
+            value={size}
+            onChange={handleSizeChange}
+          ></input>
+          <span>size: {size}</span>
+        </div>
+      </div>
     </div>
   );
 };

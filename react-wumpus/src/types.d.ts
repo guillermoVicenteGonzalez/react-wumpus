@@ -15,7 +15,7 @@ export interface CellStates {
 export type CellType = {
   states: CellStates;
   visited: boolean;
-  position?: Position;
+  position: Position;
 };
 
 export type DangerousStates = CellStates.WELL | CellStates.WUMPUS;

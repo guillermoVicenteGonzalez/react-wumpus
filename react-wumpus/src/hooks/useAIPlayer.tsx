@@ -16,6 +16,10 @@ const useAiPlayer = (size: number, board: CellType[][]) => {
     aiPlayer.current.setBoard(board);
   }, [board]);
 
+  useEffect(() => {
+    aiPlayer.current.resetInternalBoard();
+  }, []);
+
   return aiPlayer;
 };
 
