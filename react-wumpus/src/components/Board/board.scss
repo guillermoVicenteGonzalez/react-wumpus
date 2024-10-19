@@ -1,19 +1,19 @@
 .board {
-	--cell-size: 5rem;
-	--board-size: 10;
+  --cell-size: 5rem;
+  --board-size: 10;
 
-	@include respond(tab-port) {
-		--cell-size: 4rem;
-	}
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--board-size), var(--cell-size));
+  grid-template-rows: repeat(var(--board-size), var(--cell-size));
+  gap: 1rem;
+  margin: auto;
+  width: fit-content;
 
-	position: relative;
-	display: grid;
-	grid-template-columns: repeat(var(--board-size), var(--cell-size));
-	grid-template-rows: repeat(var(--board-size), var(--cell-size));
-	gap: 1rem;
-	margin: auto;
-	width: fit-content;
+  justify-items: center;
+  align-items: center;
 
-	justify-items: center;
-	align-items: center;
+  @include respond(tab-port) {
+    --cell-size: 4rem;
+  }
 }
