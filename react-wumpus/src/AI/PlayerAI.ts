@@ -127,20 +127,34 @@ export default class AIPlayer {
   }
 
   getPath(startingPos: Position) {
+    //i get the path to the gold
     const pathToGold = this.#explore(startingPos, 0);
     if (!pathToGold) return null;
-    console.log(this.#internalBoard);
     const goldPos = pathToGold[pathToGold.length - 1];
+    console.log(pathToGold);
+
+    //i clean the internal board
+    const tempInternalBoard = [...this.#internalBoard];
+    for (let i = 0; i < tempInternalBoard.length; i++) {
+      for (let j = 0; j < tempInternalBoard[i].length; j++) {
+        if (pathToGold.find((element) => element.x == i && element.y == j)) {
+          tempInternalBoard[i][j].explored = true;
+        } else tempInternalBoard[i][j].explored = false;
+      }
+    }
+
+    this.#internalBoard = [...tempInternalBoard];
+    console.log(this.#internalBoard);
+
+    //then i calculate the path back
     const backPath = this.#calculateBackPath(goldPos);
     let res = [];
     if (backPath != null) {
       res = [...pathToGold, ...backPath];
     } else {
+      console.log("just reversing path taken");
       res = [...pathToGold, ...pathToGold.reverse()];
     }
-
-    console.log("result");
-    console.log(res);
     return res;
   }
 
@@ -245,11 +259,10 @@ export default class AIPlayer {
     explored: Position[] = [],
     currentDepth: number = 0
   ): Position[] | null {
-    if (currentDepth >= 60) return null;
+    if (currentDepth >= this.#size * this.#size) return null;
     console.log("\nIteration nº " + currentDepth + " --------------");
     console.log("pos : " + pos.x + " " + pos.y);
 
-    //i get the neighbours and filter only the explored ones
     if (pos.x == this.#startingPos.x && pos.y == this.#startingPos.y) {
       console.log("I arrived at my destination");
       return [pos];
@@ -262,8 +275,10 @@ export default class AIPlayer {
       if (this.#internalBoard[x][y].explored) return { x, y };
     });
 
-    console.log("explored neighbours");
-    console.log(neighbours);
+    if (neighbours.length == 0) {
+      console.log("no elegible neighbours");
+      return null;
+    }
 
     //now i order them by distance to starting pos
     neighbours.sort((n1, n2) => {
