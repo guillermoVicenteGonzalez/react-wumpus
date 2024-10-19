@@ -1,6 +1,13 @@
 # react-wumpus
 
 A World of wumpus clone made using react + ts
+<br>
+The goal is to build a model that allows to play wumpus using react as a means to offer a view of the model.
+
+## Deployment
+
+Production build: `docker compose up`
+Developement build: `docker compose --profile dev watch`
 
 ## To do
 
@@ -9,19 +16,18 @@ A World of wumpus clone made using react + ts
   - [x] Create reducer / context
     - The reducer is redundant / adds to much complexity ?
   - [x] Obstacles cannot be in the starting pos
-- [ ] styles
+- [x] styles
 - [x] correct resizing
 - [x] game logic
 - [x] Self play (backtracking?)
-- [x] Correct event typing
+- [x] Self return to starting point (A\*?)
 - [x] Show board
 - [x] Play again => reset board (with reset gold etc)
-- [ ] on game over or similar => board reset => player AI
-- [ ] Restart AI from player position
-  - [ ] Works, but the internal board was not updated =>
-    - update internal board useEffect needed => sets visited and obstacles according to the changes on the board
+- [x] on game over or similar => board reset => player AI
 
 ## Notes
+
+### Lessons learned
 
 - board creation has become too cluttered.
 - input handling should be a global context or a reducer called direction. That way it can be handled in the app component but
