@@ -10,7 +10,6 @@ interface PlayerPosProviderValue {
 export const PlayerPosContext = createContext<PlayerPosProviderValue>({
   playerPos: { x: 0, y: 0 },
   updatePlayerPos: () => {
-    console.log("this still is the starting value");
     return -1;
   },
 });

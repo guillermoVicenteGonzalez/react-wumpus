@@ -57,7 +57,7 @@ function App() {
     setModalVisible(true);
     setErrorMsg("Calculating path to gold");
     aiPlayer.current.regenerateInternalBoard();
-    const path = aiPlayer.current.explore(startingPos, 0);
+    const path = aiPlayer.current.getPath(startingPos);
     setModalVisible(false);
 
     if (!path) {
@@ -88,13 +88,6 @@ function App() {
       movePlayer({ x: path[i].y, y: path[i].x });
       i++;
       flag = yield;
-    }
-
-    i--;
-    while (i >= 0 && flag) {
-      movePlayer({ x: path[i].y, y: path[i].x });
-      flag = yield;
-      i--;
     }
   }
 

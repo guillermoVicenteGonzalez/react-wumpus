@@ -49,7 +49,6 @@ export default class AIPlayer {
       })
       .flat();
 
-    console.log(visitedCells);
     let tempBoard = [...this.#internalBoard];
     //we set each visited cell to explored
 
@@ -60,19 +59,14 @@ export default class AIPlayer {
     }
 
     this.#internalBoard = [...tempBoard];
-
-    console.log(this.#internalBoard);
   }
 
   regenerateInternalBoard() {
-    console.log(this.#internalBoard);
     const visitedCells = this.#board
       .map((row) => {
         return row.filter((cell) => cell.visited);
       })
       .flat();
-
-    console.log(visitedCells);
 
     //i reset the board
     this.#internalBoard = this.#generateInternalBoard(this.#size);
@@ -87,8 +81,6 @@ export default class AIPlayer {
         this.#internalBoard
       );
     }
-
-    console.log(this.#internalBoard);
   }
 
   setSize(nSize: number) {
@@ -134,6 +126,24 @@ export default class AIPlayer {
     return cells;
   }
 
+  getPath(startingPos: Position) {
+    const pathToGold = this.#explore(startingPos, 0);
+    if (!pathToGold) return null;
+    console.log(this.#internalBoard);
+    const goldPos = pathToGold[pathToGold.length - 1];
+    const backPath = this.#calculateBackPath(goldPos);
+    let res = [];
+    if (backPath != null) {
+      res = [...pathToGold, ...backPath];
+    } else {
+      res = [...pathToGold, ...pathToGold.reverse()];
+    }
+
+    console.log("result");
+    console.log(res);
+    return res;
+  }
+
   #updateInternalState(currentPos: Position, internalBoard: internalCell[][]) {
     const { x, y } = currentPos;
     const neighbours = this.#getNeighbours(currentPos, this.#size);
@@ -175,11 +185,11 @@ export default class AIPlayer {
     return localNeighbours;
   }
 
-  explore(currentPos: Position, currentDepth: number = 0): Position[] | null {
+  #explore(currentPos: Position, currentDepth: number = 0): Position[] | null {
     const { x, y } = currentPos;
 
     //if the depth is greater than the space of possibilities (the size) => return
-    if (currentDepth >= this.#size * 2) {
+    if (currentDepth >= this.#size * this.#size) {
       return null;
     }
 
@@ -212,14 +222,13 @@ export default class AIPlayer {
     //now we order the neighbours and explore the optimal one
     neighbours = this.#orderNeighbours(neighbours, this.#internalBoard);
     if (neighbours.length == 0) {
-      console.log("no cells to travel to");
       return null;
     }
 
     //we define the situation
     //if i use foreach, every call is done "at the same time"
     for (let i = 0; i < neighbours.length; i++) {
-      const res: Array<Position> | null = this.explore(
+      const res: Array<Position> | null = this.#explore(
         neighbours[i],
         currentDepth + 1
       );
@@ -229,5 +238,62 @@ export default class AIPlayer {
     }
 
     return null;
+  }
+
+  #calculateBackPath(
+    pos: Position,
+    explored: Position[] = [],
+    currentDepth: number = 0
+  ): Position[] | null {
+    if (currentDepth >= 60) return null;
+    console.log("\nIteration nº " + currentDepth + " --------------");
+    console.log("pos : " + pos.x + " " + pos.y);
+
+    //i get the neighbours and filter only the explored ones
+    if (pos.x == this.#startingPos.x && pos.y == this.#startingPos.y) {
+      console.log("I arrived at my destination");
+      return [pos];
+    }
+
+    let neighbours = this.#getNeighbours(pos, this.#size);
+    console.log("unfiltered neighbours");
+    console.log(neighbours);
+    neighbours = neighbours.filter(({ x, y }) => {
+      if (this.#internalBoard[x][y].explored) return { x, y };
+    });
+
+    console.log("explored neighbours");
+    console.log(neighbours);
+
+    //now i order them by distance to starting pos
+    neighbours.sort((n1, n2) => {
+      if (
+        this.#calculateDistance(n1, this.#startingPos) >
+        this.#calculateDistance(n2, this.#startingPos)
+      )
+        return 1;
+      else return -1;
+    });
+
+    console.log("Sorted neighbours");
+    console.log(neighbours);
+    console.log("Next position");
+    console.log(neighbours[0]);
+
+    const res = this.#calculateBackPath(
+      neighbours[0],
+      [pos, ...explored],
+      currentDepth + 1
+    );
+
+    if (res == null) return null;
+
+    return [pos, ...res];
+  }
+
+  #calculateDistance(origin: Position, destination: Position) {
+    const xDist = Math.abs(destination.x - origin.x);
+    const yDist = Math.abs(destination.y - origin.y);
+    return xDist + yDist;
   }
 }
