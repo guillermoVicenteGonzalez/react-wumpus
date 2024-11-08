@@ -1,0 +1,27 @@
+name: GitHub Actions Test
+run-name: ${{ github.actor }} is trying to pull
+on:
+  push:
+    branches:
+      - "main"
+jobs:
+  deploy-job:
+    runs-on: self-hosted
+    steps:
+      - name: pull from repo
+        env:
+          PROJECT_PATH: ${{secrets.PROJECT_PATH}}
+        run: |
+          if [ -d "$PROJECT_PATH" ]; then
+            cd projects
+            git clone https://github.com/guillermoVicenteGonzalez/react-wumpus.git
+          fi
+          cd "$PROJECT_PATH"
+          git pull -q --force
+
+      - name: build docker
+        env:
+          PROJECT_PATH: ${{secrets.PROJECT_PATH}}
+        run: |
+          cd "$PROJECTS_PATH"
+          docker compose up
