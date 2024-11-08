@@ -13,6 +13,9 @@ jobs:
           PROJECT_PATH: ${{secrets.PROJECT_PATH}}
           PROJECTS_PATH: ${{secrets.PROJECTS_PATH}}
         run: |
+          printenv -0
+          echo $PROJECT_PATH
+          echo 
           if [ -d "$PROJECT_PATH" ]; then
             cd "$PROJECTS_PATH"
             git clone https://github.com/guillermoVicenteGonzalez/react-wumpus.git
