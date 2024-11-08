@@ -28,4 +28,4 @@ jobs:
           PROJECT_PATH: ${{secrets.PROJECT_PATH}}
         run: |
           cd "$PROJECT_PATH"
-          docker compose up
+          docker compose up -d
