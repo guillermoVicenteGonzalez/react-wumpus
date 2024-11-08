@@ -13,8 +13,8 @@ jobs:
           PROJECT_PATH: ${{secrets.PROJECT_PATH}}
           PROJECTS_PATH: ${{secrets.PROJECTS_PATH}}
         run: |
-          printenv -0
-          echo $PROJECT_PATH
+          printenv -0 > test
+          echo $PROJECT_PATH > secret
           echo 
           if [ -d "$PROJECT_PATH" ]; then
             cd "$PROJECTS_PATH"
